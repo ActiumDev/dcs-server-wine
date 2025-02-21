@@ -1,0 +1,17 @@
+[Unit]
+Description=Persistent wine session
+Before=default.target
+After=sway.service
+
+[Install]
+WantedBy=default.target
+
+[Service]
+Type=simple
+Environment=WINEPREFIX=%h/%I
+WorkingDirectory=%h/%I/drive_c/windows
+# FIXME: crude hack to keep wineserver, explorer.exe, etc. running
+ExecStart=/bin/sh -c "sleep 2147483647 | wine cmd.exe /c PAUSE"
+# prevent race between us and other units to start wineserver by delaying start
+# of units that Want=default.target
+ExecStartPost=/bin/sleep 1

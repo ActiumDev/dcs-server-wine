@@ -1,0 +1,40 @@
+[Unit]
+Description=DCS Dedicated Server
+AssertPathExists=%h/.wine/drive_c/DCS_configs/DCS.%i
+AssertPathExists=%h/.wine/drive_c/DCS_server/bin/DCS_server.exe
+After=default.target
+BindsTo=default.target
+
+# do not start updater before server has terminated
+After=dcs-updater.service
+# server(s) and updater must not run simultaneously
+Conflicts=dcs-updater.service
+
+# automatically restart up to 5 times in 10 minutes
+StartLimitIntervalSec=10m
+StartLimitBurst=5
+
+[Install]
+WantedBy=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.wine/drive_c/DCS_server
+Environment=DCS_LOCK_FILE="%h/.wine/drive_c/DCS_configs/DCS.%i/dcs.lock"
+ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_server.exe -w DCS.%i
+Restart=always
+RestartSec=1
+
+# systemd default service stop method (SIGTERM to $MAINPID) would forcefully
+# terminate DCS_server.exe, which would bypass its regular shutdown procedure
+# (stopping mission, running callback scripts, closing log files, ...).
+# stop DCS_server.exe gracefully via WM_CLOSE event (equivalent to pressing "X"
+# on window title bar) via taskkill.exe and the Windows PID in $DCS_LOCK_FILE.
+# NOTE: systemd expects service to have terminated once ExecStop command has
+#       returned and will immediately kill all remaining processes, so sleep
+#       until $MAINPID has exited.
+# NOTE: systemd calls ExecStop with MAINPID unset if the process terminated on
+#       its own or if it was killed.
+# https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#ExecStop=
+ExecStop=/bin/sh -c "if [ ! $MAINPID ] ; then exit ; fi ; if [ -e \"$DCS_LOCK_FILE\" ] ; then wine taskkill /pid $(cat \"$DCS_LOCK_FILE\") ; else kill -TERM $MAINPID ; fi ; while [ -e /proc/$MAINPID ] ; do sleep 1 ; done"
+TimeoutStopSec=60

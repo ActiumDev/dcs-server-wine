@@ -1,0 +1,23 @@
+[Unit]
+Description=SRS Server
+AssertPathExists=%h/.wine/drive_c/SRS_server/SR-Server.exe
+AssertPathExists=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/SR-Server.exe
+After=default.target
+BindsTo=default.target
+
+# automatically restart up to 5 times in 10 minutes
+StartLimitIntervalSec=10m
+StartLimitBurst=5
+
+[Install]
+WantedBy=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS
+# TODO: automatically set SERVER_PORT= in SRS/server.cfg from srsauto_port in
+#       Config/autoexec.cfg via ExecStartPre:
+#       ExecStartPre=grep -E '^srsauto_port\s*=\s*[0-9]+$' %h/.wine/drive_c/DCS_configs/DCS.%i/Config/autoexec.cfg | ...
+ExecStart=/usr/bin/wine SR-Server.exe
+Restart=always
+RestartSec=1

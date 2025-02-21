@@ -1,0 +1,25 @@
+[Unit]
+Description=sway - SirCmpwn's Wayland window manager
+Documentation=man:sway(5)
+Before=default.target
+
+[Install]
+WantedBy=default.target
+
+[Service]
+# TODO: `exec systemd-notify --ready` in sway config
+Type=notify
+NotifyAccess=all
+# https://github.com/swaywm/wlroots/blob/master/docs/env_vars.md
+Environment=WLR_BACKENDS=headless
+Environment=WLR_RENDERER=pixman
+Environment=WLR_LIBINPUT_NO_DEVICES=1
+#Environment=WLR_DRM_DEVICES=
+Environment=WLR_RENDERER_ALLOW_SOFTWARE=1
+ExecStart=/usr/bin/sway
+# workaround for race condition caused by dependent services accessing wayland prematurely
+ExecStartPost=/usr/bin/sleep 1
+Restart=on-failure
+RestartSec=1
+TimeoutStopSec=10
+ExecStopPost=/usr/bin/systemctl --user unset-environment SWAYSOCK DISPLAY WAYLAND_DISPLAY

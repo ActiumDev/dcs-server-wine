@@ -1,0 +1,13 @@
+[Unit]
+Description=DCS Dedicated Server Updater
+AssertPathExists=%h/.wine/drive_c/DCS_server/bin/DCS_updater.exe
+After=default.target
+BindsTo=default.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/.wine/drive_c/DCS_server
+# keep DCS_updater.exe from auto-launching DCS_server.exe (updater resets autoupdate.cfg after update)
+ExecStartPre=/usr/bin/sed -i 's,"bin/DCS_server.exe",null,' %h/.wine/drive_c/DCS_server/autoupdate.cfg
+ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_updater.exe update
+ExecStopPost=/usr/bin/sed -i 's,"bin/DCS_server.exe",null,' %h/.wine/drive_c/DCS_server/autoupdate.cfg
