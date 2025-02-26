@@ -121,6 +121,14 @@ if ! systemctl --user start dcs-updater.service ; then
 	exit 1
 fi
 
+# FIXME: temporary workaround for login failure due to bug in DCS that causes
+#        unreliable DNS resolution of the DCS master server domain
+# https://forum.dcs.world/topic/369453-dcs-launcher-error-after-latest-update/page/2/#findComment-5608887
+WINE_ETC_HOSTS=${WINEPREFIX:-$HOME/.wine}/drive_c/windows/system32/drivers/etc/hosts
+if ! grep -q "^185.195.197.4 api.digitalcombatsimulator.com" $WINE_ETC_HOSTS ; then
+	echo "185.195.197.4 api.digitalcombatsimulator.com" >>$WINE_ETC_HOSTS
+fi
+
 # enable and start DCS server
 systemctl --user enable --now dcs-server@server1.service
 # verify it started successfully (may take a few seconds to fail)
