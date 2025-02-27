@@ -1,4 +1,4 @@
--- DCS World Standalone Web Console v0.1
+-- DCS World Standalone Web Console v2025.02.27
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -25,17 +25,10 @@ local socket = require("socket")
 --   * file:///C:/%DCS_INSTALL_PATH%/API/DCS_ControlAPI.html
 --   * https://wiki.hoggitworld.com/view/Hoggit_DCS_World_Wiki
 _G.webcon = {}
+webcon.port = tonumber(DCS.getConfigValue("webconsole_port") or nil) or 8089
 webcon.max_length_uri = 512
 webcon.max_length_headers = 4096
 webcon.max_length_body = 1024*1024
-
-if DCS.getConfigValue("webconsole_port") ~= nil then
-    webcon.port = tonumber(DCS.getConfigValue("webconsole_port"))
-elseif DCS.getConfigValue("webgui_port") ~= nil then
-    webcon.port = tonumber(DCS.getConfigValue("webgui_port")) + 1
-else
-    webcon.port = 8089
-end
 
 -- name of this script file (used as logging subsystem name)
 local _name = debug.getinfo(1, "S").source:match("[^\\]+%.lua$") or "WebConsole.lua"
@@ -226,41 +219,19 @@ function webcon.http_post(req_path, req_headers, req_body)
         end
 
     -- execute in real mission scripting environment via:
-    -- net.dostring_in("mission", "a_do_script(...)")
+    -- net.dostring_in("mission", "return a_do_script(...)")
     elseif lua_state == "*a_do_script" then
-        -- NOTE: a_do_script() does not pass-thru return values, so instead, the
-        --       return value is passed via a temporary file that is written by
-        --       webcon.a_do_scriturn(), which must be manually(!) injected into
-        --       MissionScripting.lua to circumvent its sanitization
-        -- FIXME: fails if MissionScripting.lua lacks webcon.a_do_scriturn()
-        -- TODO: return `204 No Content` if webcon.a_do_scriturn() is missing
         local result, success = net.dostring_in("mission",
-            string.format("a_do_script(%q)", table.concat({
-                "webcon.a_do_scriturn(function () ",
+            string.format("return a_do_script(%q)", table.concat({
+                "local success, result = pcall(function () ",
                 req_body,
-                "\nend)"
+                "\nend)\nif success then return webcon.dump_json(result) else return 'ERROR: ' .. result end"
             }))
         )
         if not success then
             -- net.dostring_in() may return {nil, nil} on client(?), so result could be nil
             return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, "ERROR: " .. tostring(result)
         end
-
-        -- read temporary file that contains result
-        local tmp = lfs.tempdir() .. "WebConsole.a_do_script.tmp"
-        local file, err = io.open(tmp, "r")
-        if file == nil then
-            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, string.format("ERROR: Error opening file %q: %s", tmp, err)
-        end
-        local result = file:read("*a")
-        file:close()
-
-        -- truncate temporary file
-        local file, err = io.open(tmp, "w")
-        if file == nil then
-            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, string.format("ERROR: Error opening file %q: %s", tmp, err)
-        end
-        file:close()
 
         if not result:match("^ERROR:") then
             return "200 OK", {["Content-Type"] = "application/json"}, result
@@ -352,7 +323,9 @@ function webcon.onMissionLoadEnd()
 end
 
 -- register callbacks
-DCS.setUserCallbacks(webcon)
+if webcon.port and webcon.port >= 1024 and webcon.port <= 65535 then
+    DCS.setUserCallbacks(webcon)
+end
 
 -- helper code to inject into the Lua states
 webcon.inject = [[
