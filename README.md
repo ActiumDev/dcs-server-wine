@@ -106,10 +106,10 @@ Run via `ssh dcs@server`:
 ```sh
 # use Git to download all scripts and config files into the home directory
 cd ~
-git init -q .
+git init -b main ~
 git remote add origin https://github.com/ActiumDev/dcs-server-wine.git
-git fetch main
-git checkout main
+git fetch origin main
+git reset --mixed origin/main
 # start basic services: minimal GUI, VNC server, Wine server
 # TODO: replace 5900 with your desired, locally bound VNC port
 systemctl --user daemon-reload
