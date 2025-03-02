@@ -35,6 +35,10 @@ cat <<-EOF >${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
 
 	# NOTE: explorer.exe is required to open new windows
 	[HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides]
+	# workaround for Wine prior to 8.8 lacking /64bit argument:
+	# https://github.com/ActiumDev/dcs-server-wine/issues/2
+	# TODO: re-assess when deprecating Wine 8.0
+	"dxdiag.exe"="disabled"
 	"winedevice.exe"="disabled"
 	#"rpcss.exe"="disabled"
 	#"services.exe"="disabled"
