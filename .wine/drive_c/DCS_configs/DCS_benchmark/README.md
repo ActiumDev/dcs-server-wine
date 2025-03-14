@@ -8,7 +8,7 @@ lifting. If configured via environment variables, it will start the benchmark
 mode only when the server loads any mission. Thus, an unconfigured server will
 not work. Both [`serverSettings.lua`](Config/serverSettings.lua) and
 [`Empty.miz`](./Missions/Empty.miz) provide a suitable minimal configuration
-(the path in `missionList` likely neesd to be adjusted).
+(the path in `missionList` likely needs to be adjusted).
 
 Once in benchmark mode, the server will load the mission specified in the
 environment variable `BENCHMARK_MISSION` and run it `BENCHMARK_ROUNDS` times

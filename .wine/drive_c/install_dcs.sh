@@ -120,8 +120,8 @@ fi
 # updater is executed as background service (immune to SSH connection loss)
 # for more information on DCS updater and its arguments, see:
 #   * https://forum.dcs.world/topic/94816-guide-info-dcs-updater-usage-version-numbers-module-ids/
-if ! systemctl --user start dcs-updater.service ; then
-	systemctl --user --lines=100 status dcs-updater.service
+if ! systemctl --user start dcs-updater ; then
+	systemctl --user --lines=100 status dcs-updater
 	exit 1
 fi
 
@@ -134,11 +134,11 @@ if ! grep -q "^185.195.197.4 api.digitalcombatsimulator.com" $WINE_ETC_HOSTS ; t
 fi
 
 # enable and start DCS server
-systemctl --user enable --now dcs-server@server1.service
+systemctl --user enable --now dcs-server@server1
 # verify it started successfully (may take a few seconds to fail)
 # FIXME: systemd restarts faster than this
 sleep 10
-if ! systemctl --user --quiet is-active dcs-server@server1.service ; then
-	systemctl --user --lines=100 status dcs-server@server1.service
+if ! systemctl --user --quiet is-active dcs-server@server1 ; then
+	systemctl --user --lines=100 status dcs-server@server1
 	exit 1
 fi

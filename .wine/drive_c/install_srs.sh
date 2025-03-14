@@ -41,7 +41,7 @@ if [ -z "$MONO_VER" ] ; then
 	curl -fOL "$MONO_URL"
 	wine $MONO_MSI
 	echo $MONO_MSI >$MONO_DIR/version.txt
-	#rm -f $MONO_MSI
+	rm -f $MONO_MSI
 elif [ "$MONO_VER" != "$MONO_MSI" ] ; then
 	# https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Mono#prefix-local-install
 	echo "***ERROR***: Incorrect Wine Mono version installed. Run 'wine uninstaller' and remove 'Wine Mono Runtime' and 'Wine Mono Windows Support'!"
@@ -81,11 +81,11 @@ if [ "$SRS_VER" != "$SRS_ZIP" ] ; then
 fi
 
 # enable and start SRS server
-systemctl --user enable --now srs-server@server1.service
+systemctl --user enable --now srs-server@server1
 # verify it started successfully (may take a few seconds to fail)
 # FIXME: systemd restarts faster than this
 sleep 5
-if ! systemctl --user --quiet is-active srs-server@server1.service ; then
-	systemctl --user --lines=100 status srs-server@server1.service
+if ! systemctl --user --quiet is-active srs-server@server1 ; then
+	systemctl --user --lines=100 status srs-server@server1
 	exit 1
 fi

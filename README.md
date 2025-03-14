@@ -113,7 +113,7 @@ git reset --mixed origin/main
 # start basic services: minimal GUI, VNC server, Wine server
 # TODO: replace 5900 with your desired, locally bound VNC port
 systemctl --user daemon-reload
-systemctl --user enable --now sway.service wayvnc@5900.service wine-session@.wine.service
+systemctl --user enable --now sway wayvnc@5900 wine-session@.wine
 ```
 
 The DCS user account should now be running the minimal GUI, which is accessible
@@ -170,7 +170,7 @@ Modify `~/.wine/drive_c/DCS_configs/DCS.server1/Config/autoexec.cfg` to suit
 your requirements. Additionally, use the WebGUI to conveniently configure the
 server settings. Then restart the server for all changes to take effect:
 ```sh
-systemctl --user restart srs-server@server1.service
+systemctl --user restart dcs-server@server1
 ```
 
 
