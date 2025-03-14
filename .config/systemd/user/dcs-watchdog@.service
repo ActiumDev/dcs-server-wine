@@ -1,0 +1,11 @@
+[Unit]
+Description=DCS Dedicated Server Watchdog
+# only start watchdog after dcs-server has been started and stop/restart
+# watchdog together with dcs-server
+After=dcs-server@%i.service
+PartOf=dcs-server@%i.service
+
+[Service]
+Type=simple
+ExecStart=%h/bin/dcs-watchdog.py DCS.%i
+Restart=always

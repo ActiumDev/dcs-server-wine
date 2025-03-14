@@ -136,7 +136,6 @@ fi
 # enable and start DCS server
 systemctl --user enable --now dcs-server@server1
 # verify it started successfully (may take a few seconds to fail)
-# FIXME: systemd restarts faster than this
 sleep 10
 if ! systemctl --user --quiet is-active dcs-server@server1 ; then
 	systemctl --user --lines=100 status dcs-server@server1

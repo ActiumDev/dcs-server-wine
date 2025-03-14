@@ -10,7 +10,15 @@ After=dcs-updater.service
 # server(s) and updater must not run simultaneously
 Conflicts=dcs-updater.service
 
+# start dcs-watchdog when starting the dcs-server
+Requires=dcs-watchdog@%i.service
+# restart dcs-server when restarting dcs-watchdog (watchdog is a canary that
+# exits to signals failure of dcs-server)
+PartOf=dcs-watchdog@%i.service
+
 # automatically restart up to 5 times in 10 minutes
+# FIXME: breaks automatic restart when master server is down
+# TODO: rely on RestartMaxDelaySec= instead (see below)
 StartLimitIntervalSec=10m
 StartLimitBurst=5
 
@@ -23,7 +31,17 @@ WorkingDirectory=%h/.wine/drive_c/DCS_server
 Environment=DCS_LOCK_FILE="%h/.wine/drive_c/DCS_configs/DCS.%i/dcs.lock"
 ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_server.exe -w DCS.%i
 Restart=always
-RestartSec=1
+RestartSec=15
+# starting the dedicated server while the DCS master server is (temporarily)
+# unreachable, results in a bricked server:
+# https://forum.dcs.world/topic/370019-loginscript-errors-brick-dedicated-server-unreliable-as-non-interactive-background-service/#comment-5616141
+# although dcs-watchdog will force a restart, the current restart delay is
+# relatively low for continuously attempting to start the server.
+# TODO: use RestartSteps= and RestartMaxDelaySec= to linearly increase restart
+#       delays once systemd 254 becomes available with Debian Trixie:
+#       https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#RestartSteps=
+#RestartSteps=10
+#RestartMaxDelaySec=600
 
 # systemd default service stop method (SIGTERM to $MAINPID) would forcefully
 # terminate DCS_server.exe, which would bypass its regular shutdown procedure

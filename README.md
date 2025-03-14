@@ -19,7 +19,8 @@ on a single headless Linux server.
   * Runs Caucasus, Marianas, and Syria on servers with 16G RAM (other terrains unverified)
 * Convenient management of all server processes through systemd user services
   (`systemctl --user start|stop|status dcs-server|srs-server`) and automatic
-  restart of failed services (to the extent DCS enables it ...).
+  restart of failed services (including detection and forced restart of frozen
+  servers with an unresponsive WebGUI).
 * Supports multiple DCS server instances (`DCS_server.exe -w DCS.*`) through
   systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description1~https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description1~https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description)
 
