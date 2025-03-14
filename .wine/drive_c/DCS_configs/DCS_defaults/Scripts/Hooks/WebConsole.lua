@@ -26,6 +26,7 @@ local socket = require("socket")
 --   * https://wiki.hoggitworld.com/view/Hoggit_DCS_World_Wiki
 _G.webcon = {}
 webcon.port = tonumber(DCS.getConfigValue("webconsole_port") or nil) or 8089
+webcon.auth = DCS.getConfigValue("webconsole_auth")
 webcon.max_length_uri = 512
 webcon.max_length_headers = 4096
 webcon.max_length_body = 1024*1024
@@ -116,6 +117,14 @@ function webcon.http_client(sock)
         req_headers[name:lower()] = value
     end
 
+    -- HTTP Basic authentication
+    -- https://datatracker.ietf.org/doc/html/rfc7617
+    if webcon.auth and req_headers["authorization"] ~= "Basic " .. webcon.auth then
+        sock:send("HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: Basic realm=\"WebConsole.lua\", charset=\"UTF-8\"\r\nConnection: close\r\nContent-type: text/plain\r\n\r\n401 Unauthorized")
+        sock:close()
+        return
+    end
+
     -- prepare reponse based on request method
     local resp_code, resp_headers, resp_body = nil, nil, nil
     if req_method == "GET" then
@@ -160,9 +169,8 @@ function webcon.http_client(sock)
     for key, value in pairs(resp_headers) do
         resp_crumbs[#resp_crumbs + 1] = string.format("%s: %s", key, value)
     end
-    -- termine headers with double CRLF
-    resp_crumbs[#resp_crumbs + 1] = ""
-    resp_crumbs[#resp_crumbs + 1] = ""
+    -- terminate headers with double CRLF
+    resp_crumbs[#resp_crumbs + 1] = "\r\n"
 
     -- send reponse
     sock:send(table.concat(resp_crumbs, "\r\n"))
@@ -259,13 +267,13 @@ end
 function webcon.onSimulationResume()
     -- WARNING: !!! ONLY BIND TO 127.0.0.1 AND READ THIS WARNING !!!
     --          The WebConsole can be used to execute arbitrary shell commands
-    --          via `os.execute()`. The DCS core is ill-equipped to implement
-    --          request authentication securely and efficiently, so this script
-    --          does not attempt it. If you require remote WebConsole access,
-    --          forward its port via a reverse HTTP proxy or via `ssh -L`.
+    --          via `os.execute()`. If you require remote WebConsole access,
+    --          forward its port via a reverse HTTP(S) proxy or via `ssh -L`.
     --          Also be warned that local requests can originate from other
-    --          users or software. Only employ the WebConsole in a single user
-    --          environment or with appropriate firewall rules in place!
+    --          users or software. Enable HTTP Basic authentication on such
+    --          multi-user systems or setup appropriate firewall rules! Basic
+    --          authentication is unencrypted and insecure and provides *NO*
+    --          protection when used remotely over the network.
     -- WARNING: !!! ONLY BIND TO 127.0.0.1 AND READ THIS WARNING !!!
     webcon.server = assert(socket.bind("127.0.0.1", webcon.port))
     local addr, port, family = webcon.server:getsockname()
