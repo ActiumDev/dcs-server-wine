@@ -1,4 +1,4 @@
--- DCS World Standalone Web Console v2025.02.27
+-- DCS World Standalone Web Console v2025.03.14
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -503,7 +503,7 @@ end
 
 webcon.html = [[
 <!DOCTYPE html>
-<!-- DCS World Standalone Web Console v0.1 -->
+<!-- DCS World Standalone Web Console v2025.03.14 -->
 <!-- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com> -->
 <!-- SPDX-License-Identifier: MIT -->
 <html>
