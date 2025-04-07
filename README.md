@@ -90,7 +90,7 @@ Run via `ssh root@server`:
 ```sh
 # Activate i386 architecture (required by Wine) and install dependencies
 # TODO: adjust this if your server does not run Debian
-sudo dpkg --add-architecture i368 && sudo apt update
+sudo dpkg --add-architecture i386 && sudo apt update
 sudo apt install --no-install-recommends \
 	curl fonts-liberation git wine wine32 wine64 python3-minimal \
 	sway unzip wayvnc xwayland
