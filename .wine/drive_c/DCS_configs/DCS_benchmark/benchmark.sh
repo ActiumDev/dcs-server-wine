@@ -6,7 +6,7 @@ CPU_NAME=$(grep -m1 "^model name" /proc/cpuinfo)
 CPU_NAME=${CPU_NAME#*: }
 
 # export environment variables required by Benchmark.lua
-export BENCHMARK_MISSION="Benchmark_200.miz"
+export BENCHMARK_MISSION="Benchmark_200_v2024.11.23.miz"
 export BENCHMARK_ROUNDS=10
 export BENCHMARK_RUNTIME=300
 export OS_NAME=$PRETTY_NAME
@@ -23,8 +23,8 @@ if ! systemctl --user --quiet is-active sway ; then
 fi
 
 # redirect new windows to headless GUI session
-export $(systemctl --user show-environment | grep ^DISPLAY=)
-export $(systemctl --user show-environment | grep ^WAYLAND_DISPLAY=)
+export $(systemctl --user show-environment | grep -m1 ^DISPLAY=)
+export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
 
 # start DCS server with suppressed log output
 cd "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_server"
