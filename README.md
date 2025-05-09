@@ -38,13 +38,39 @@ Do not attempt the installation if you lack the required fundamentals!
   ceiling. The included `FPSmon.lua` script will warn about performance issues.
 * RAM: 16G or **more**. 16G should suffice for a single server instance without
   mods on Caucasus. The sky is the limit once multiple instances, mods, and
-  larger terrains are involved.
+  larger terrains are involved. Do not use a disk-backed swap partition, use
+  [zram](https://packages.debian.org/stable/systemd-zram-generator) instead.
 * Disk: NVMe SSD with >40 GB usable space for a Caucasus-only install.
   Additional terrains will need more space. If you're disk space constrained,
   [transparent file compression](https://btrfs.readthedocs.io/en/latest/Compression.html)
   may be an option.
 * Network: 1 Gbps link in a datacenter. At least 100 Mbps at home.
   The CDN used by `DCS_updater.exe` currently throttles downloads at ~25 MB/s.
+
+Dedicated server module names and respective installed and download sizes as of
+DCS 2.9.15.9599. Note that to install a module, you will temporarily need free
+disk space for the sum of both sizes as `DCS_updater.exe` will first download
+all files and then unpack the module.
+
+| Module                 | Installed (GB) | Download (GB) |
+| ---------------------- | -------------- | ------------- |
+| AFGHANISTAN_terrain    |         58.417 |        20.158 |
+| CAUCASUS_terrain       |         11.073 |         3.987 |
+| FALKLANDS_terrain      |         36.498 |        10.455 |
+| GERMANYCW_terrain      |         75.937 |        25.406 |
+| IRAQ_terrain           |         68.854 |        22.786 |
+| KOLA_terrain           |         65.620 |        18.823 |
+| MARIANAISLANDS_terrain |          9.819 |         2.792 |
+| NEVADA_terrain         |          7.090 |         2.327 |
+| NORMANDY_terrain       |         33.542 |        11.319 |
+| PERSIANGULF_terrain    |         22.718 |         7.904 |
+| SINAIMAP_terrain       |         36.211 |        11.280 |
+| SUPERCARRIER           |          0.233 |         0.149 |
+| SYRIA_terrain          |         37.320 |        12.492 |
+| THECHANNEL_terrain     |         17.980 |         6.617 |
+| WORLD                  |         15.322 |         8.276 |
+| WWII-ARMOUR            |          1.109 |         0.460 |
+| **SUM**                |        497.742 |       165.232 |
 
 ### Operating System
 
@@ -109,8 +135,7 @@ Run via `ssh dcs@server`:
 cd ~
 git init -b main ~
 git remote add origin https://github.com/ActiumDev/dcs-server-wine.git
-git fetch origin main
-git reset --mixed origin/main
+git pull origin main
 # start basic services: minimal GUI, VNC server, Wine server
 # TODO: replace 5900 with your desired, locally bound VNC port
 systemctl --user daemon-reload
@@ -151,7 +176,7 @@ server to start non-interactively in the future.
 
 The VNC session should now show the DCS splash screen and the SRS server window
 (the SRS window may be hidden behind the DCS window). If so, the DCS server
-should run be running on port 10308 (default) and SRS on port 5002 (default).
+should be running on port 10308 (default) and SRS on port 5002 (default).
 The server is unlisted (not public) by default.
 
 You can connect to the server by IP address and port. The default mission will
