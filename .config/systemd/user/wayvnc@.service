@@ -1,7 +1,7 @@
 [Unit]
 Description=VNC Server
 Documentation=man:wayvnc(1)
-Before=default.target
+
 After=sway.service
 BindsTo=sway.service
 
@@ -11,3 +11,6 @@ WantedBy=default.target
 [Service]
 Type=simple
 ExecStart=/usr/bin/wayvnc 127.0.0.1 %i
+
+Restart=always
+RestartSec=1

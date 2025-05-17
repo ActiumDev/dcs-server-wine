@@ -1,8 +1,8 @@
 [Unit]
 Description=DCS Dedicated Server Watchdog
-# only start watchdog after dcs-server has been started and stop/restart
-# watchdog together with dcs-server
+# only start watchdog after dcs-server has been started
 After=dcs-server@%i.service
+# stop/restart watchdog together with dcs-server
 PartOf=dcs-server@%i.service
 
 [Service]

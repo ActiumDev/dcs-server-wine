@@ -1,9 +1,15 @@
 [Unit]
 Description=SRS Server
-AssertPathExists=%h/.wine/drive_c/SRS_server/SR-Server.exe
-AssertPathExists=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/SR-Server.exe
-After=default.target
-BindsTo=default.target
+Documentation=https://github.com/ciribob/DCS-SimpleRadioStandalone/
+
+# verify required file and directory structure
+AssertFileNotEmpty=%h/.wine/drive_c/SRS_server/SR-Server.exe
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/server.cfg
+AssertPathIsSymbolicLink=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/SR-Server.exe
+
+# depend on shared wineserver (see wineserver.service for details)
+After=wineserver.service
+Requires=wineserver.service
 
 # automatically restart up to 5 times in 10 minutes
 StartLimitIntervalSec=10m

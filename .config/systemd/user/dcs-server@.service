@@ -1,9 +1,15 @@
 [Unit]
 Description=DCS Dedicated Server
-AssertPathExists=%h/.wine/drive_c/DCS_configs/DCS.%i
-AssertPathExists=%h/.wine/drive_c/DCS_server/bin/DCS_server.exe
-After=default.target
-BindsTo=default.target
+
+# verify required file and directory structure
+AssertDirectoryNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i/Config/serverSettings.lua
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_server/bin/DCS_server.exe
+AssertPathIsSymbolicLink=%h/.wine/drive_c/users/%u/Saved Games
+
+# depend on shared wineserver (see wineserver.service for details)
+After=wineserver.service
+Requires=wineserver.service
 
 # do not start updater before server has terminated
 After=dcs-updater.service

@@ -1,13 +1,26 @@
 [Unit]
-Description=DCS Dedicated Server Updater
-AssertPathExists=%h/.wine/drive_c/DCS_server/bin/DCS_updater.exe
-After=default.target
-BindsTo=default.target
+Description=DCS Updater
+Documentation=https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/
+Documentation=https://forum.dcs.world/topic/94816-guide-info-dcs-updater-usage-version-numbers-module-ids/
+
+# verify required file and directory structure
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_server/autoupdate.cfg
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_server/dcs_variant.txt
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_server/bin/DCS_updater.exe
+
+# depend on shared wineserver (see wineserver.service for details)
+After=wineserver.service
+Requires=wineserver.service
 
 [Service]
 Type=oneshot
 WorkingDirectory=%h/.wine/drive_c/DCS_server
+ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_updater.exe update
+
 # keep DCS_updater.exe from auto-launching DCS_server.exe (updater resets autoupdate.cfg after update)
 ExecStartPre=/usr/bin/sed -i 's,"bin/DCS_server.exe",null,' %h/.wine/drive_c/DCS_server/autoupdate.cfg
-ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_updater.exe update
 ExecStopPost=/usr/bin/sed -i 's,"bin/DCS_server.exe",null,' %h/.wine/drive_c/DCS_server/autoupdate.cfg
+
+# (re)start all enabled dcs-server@* instances after updater exited
+# FIXME: starts enabled server instances that were not running before update
+#ExecStopPost=/bin/sh -c "cd %h/.config/systemd/user/default.target.wants ; systemctl --user --no-block start dcs-server@*.service"

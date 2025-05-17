@@ -1,0 +1,27 @@
+[Unit]
+Description=Persistent wineserver shared by multiple wine-based services
+# wine automatically starts and stops wineserver as needed. the first wine
+# instance spawns the server and the last closed instance reaps it.
+# unfortunately, that does not work with wine instances in systemd services.
+# the wineserver will be part of the service that was started first and will
+# be forcibly terminated when that service is stopped. all other services that
+# use wine will be left without a wineserver, breaking these services.
+# this service runs wineserver as a separate systemd service that all
+# wine-based services should depend on (After= and Requires=).
+
+# start after sway set environment variables (DISPLAY and WAYLAND_DISPLAY)
+After=sway.service
+Requires=sway.service
+
+# stop wineserver when last dependent unit stopped
+# https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#StopWhenUnneeded=
+StopWhenUnneeded=yes
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.wine/drive_c
+# FIXME: crude hack to keep wineserver, explorer.exe, etc. running
+ExecStart=/usr/bin/wine %h/.wine/drive_c/bin/idle.exe
+# prevent race condition to start wineserver between us and dependent units by
+# delaying the latter
+ExecStartPost=/usr/bin/sleep 1
