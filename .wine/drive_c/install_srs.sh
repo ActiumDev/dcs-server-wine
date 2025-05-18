@@ -1,5 +1,18 @@
 #!/bin/sh -eux
 
+# SRS download link (most recent release known to work)
+SRS_URL="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/download/2.1.1.0/DCS-SimpleRadioStandalone-2.1.1.0.zip"
+
+# need headless GUI session to run DCS installer
+if ! systemctl --user --quiet is-active sway ; then
+        echo "ERROR: Minimal GUI not running. Required to install SRS." >&2
+        exit 1
+fi
+
+# redirect new windows to headless GUI session (winecfg)
+export $(systemctl --user show-environment | grep -m1 ^DISPLAY=)
+export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
+
 # SRS depends on the .NET Framework, so install its Wine substitute Wine Mono:
 #   * https://gitlab.winehq.org/mono/wine-mono
 #   * https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Mono
@@ -9,7 +22,7 @@
 #   * https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Mono#versions
 WINE_VERSION=$(wine --version)
 case ${WINE_VERSION%% *} in
-wine-10.0|wine-10.0-rc*)
+wine-10.0)
 	MONO_URL="https://dl.winehq.org/wine/wine-mono/9.4.0/wine-mono-9.4.0-x86.msi"
 	break
 	;;
@@ -26,12 +39,9 @@ wine-7.0)
 	break
 	;;
 *)
-	echo "***ERROR***: Unable to determine required Wine Mono version for unknown Wine version $WINE_VERSION!"
+	echo "***ERROR***: Unable to determine required Wine Mono version for unknown Wine version $WINE_VERSION!" >&2
 	exit 1
 esac
-
-# SRS download link (most recent release known to work)
-SRS_URL="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/download/2.1.1.0/DCS-SimpleRadioStandalone-2.1.1.0.zip"
 
 # install or update Wine Mono
 MONO_DIR=${WINEPREFIX:-$HOME/.wine}/drive_c/windows/mono
@@ -44,7 +54,7 @@ if [ -z "$MONO_VER" ] ; then
 	rm -f $MONO_MSI
 elif [ "$MONO_VER" != "$MONO_MSI" ] ; then
 	# https://gitlab.winehq.org/wine/wine/-/wikis/Wine-Mono#prefix-local-install
-	echo "***ERROR***: Incorrect Wine Mono version installed. Run 'wine uninstaller' and remove 'Wine Mono Runtime' and 'Wine Mono Windows Support'!"
+	echo "***ERROR***: Incorrect Wine Mono version installed. Run 'wine uninstaller' and remove 'Wine Mono Runtime' and 'Wine Mono Windows Support'!" >&2
 	exit 1
 	# TODO: automatically uninstall Wine Mono
 	# TODO: determine if GUIDs are constant
@@ -58,7 +68,7 @@ fi
 ARIAL_TTF="/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
 FONTS_DIR=${WINEPREFIX:-$HOME/.wine}/drive_c/windows/Fonts
 if [ ! -e $ARIAL_TTF ] ; then
-	echo "***ERROR***: file '$ARIAL_TTF' not found!"
+	echo "***ERROR***: file '$ARIAL_TTF' not found!" >&2
 	exit 1
 fi
 if [ ! -e $FONTS_DIR/arial.ttf ] ; then
@@ -87,5 +97,6 @@ systemctl --user enable --now srs-server@server1
 sleep 5
 if ! systemctl --user --quiet is-active srs-server@server1 ; then
 	systemctl --user --lines=100 status srs-server@server1
+	echo "ERROR: starting SRS server failed" >&2
 	exit 1
 fi

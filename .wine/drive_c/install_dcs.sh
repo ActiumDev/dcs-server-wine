@@ -5,12 +5,13 @@ DCS_UPDATER_URL="https://cdn.digitalcombatsimulator.com/files/DCS_updater_64bit.
 
 # need headless GUI session to run DCS installer
 if ! systemctl --user --quiet is-active sway ; then
+	echo "ERROR: Minimal GUI not running. Required to start DCS updater." >&2
 	exit 1
 fi
 
-# redirect new windows to headless GUI session
-export $(systemctl --user show-environment | grep ^DISPLAY=)
-export $(systemctl --user show-environment | grep ^WAYLAND_DISPLAY=)
+# redirect new windows to headless GUI session (winecfg)
+export $(systemctl --user show-environment | grep -m1 ^DISPLAY=)
+export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
 
 # configure Wine
 wine winecfg -v win10
@@ -122,6 +123,7 @@ fi
 #   * https://forum.dcs.world/topic/94816-guide-info-dcs-updater-usage-version-numbers-module-ids/
 if ! systemctl --user start dcs-updater ; then
 	systemctl --user --lines=100 status dcs-updater
+	echo "ERROR: DCS updater failed" >&2
 	exit 1
 fi
 
@@ -139,5 +141,6 @@ systemctl --user enable --now dcs-server@server1
 sleep 10
 if ! systemctl --user --quiet is-active dcs-server@server1 ; then
 	systemctl --user --lines=100 status dcs-server@server1
+	echo "ERROR: starting DCS dedicated server failed" >&2
 	exit 1
 fi
