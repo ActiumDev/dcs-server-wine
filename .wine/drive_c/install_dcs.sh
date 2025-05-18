@@ -3,6 +3,13 @@
 # DCS updater download link
 DCS_UPDATER_URL="https://cdn.digitalcombatsimulator.com/files/DCS_updater_64bit.zip"
 
+# DCS updater likely requires a UTF-8 locale:
+# https://github.com/ActiumDev/dcs-server-wine/issues/5#issuecomment-2869641405
+if [ ${LANG%.UTF-8} = ${LANG} ] ; then
+	echo "ERROR: The DCS updater requires a UTF-8 compatible locale, but your locale is not (\$LANG=$LANG)." >&2
+	exit 1
+fi
+
 # need headless GUI session to run DCS installer
 if ! systemctl --user --quiet is-active sway ; then
 	echo "ERROR: Minimal GUI not running. Required to start DCS updater." >&2
