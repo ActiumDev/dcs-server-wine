@@ -1,4 +1,4 @@
--- DCS World Benchmark Mode v2025.02.28
+-- DCS World Benchmark Mode v2025.05.31
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -35,12 +35,12 @@ benchmark.restart = false
 
 function benchmark.onSimulationStart()
     log.write(_name, log.INFO, string.format("Starting benchmark round %d of %d.", benchmark.round + 1, BENCHMARK_ROUNDS))
-    benchmark.logfile:write(string.format("# START: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getModelTime()))
+    benchmark.logfile:write(string.format("# START: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getRealTime()))
 
     -- abort if wrong mission is still running after a restart
     if benchmark.restart and DCS.getMissionFilename() ~= benchmark.mission_path then
         log.write(_name, log.ERROR, "Aborting. Invalid mission loaded: " .. DCS.getMissionFilename())
-        benchmark.logfile:write(string.format("# FAILED: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getModelTime()))
+        benchmark.logfile:write(string.format("# FAILED: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getRealTime()))
         DCS.exitProcess()
         return
     end
@@ -61,11 +61,12 @@ function benchmark.onSimulationStart()
     end
 
     -- initialize time of previous frame
-    benchmark.prev_frame = DCS.getModelTime()
+    benchmark.prev_frame = math.floor(DCS.getRealTime() * 1e3 + 0.5)
+    benchmark.time_stop = DCS.getRealTime() + BENCHMARK_RUNTIME
 end
 
 function benchmark.onSimulationStop()
-    benchmark.logfile:write(string.format("# STOP: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getModelTime()))
+    benchmark.logfile:write(string.format("# STOP: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getRealTime()))
     benchmark.logfile:flush()
 
     -- exit server if not restarting for next benchmark round
@@ -81,11 +82,11 @@ function benchmark.onSimulationStop()
 end
 
 function benchmark.onSimulationPause()
-    benchmark.logfile:write(string.format("# PAUSE: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getModelTime()))
+    benchmark.logfile:write(string.format("# PAUSE: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getRealTime()))
     benchmark.logfile:flush()
 
     -- unpause if benchmark runtime has not yet elapsed
-    if DCS.getModelTime() < BENCHMARK_RUNTIME then
+    if DCS.getRealTime() < benchmark.time_stop then
         DCS.setPause(false)
         return
     end
@@ -106,18 +107,19 @@ function benchmark.onSimulationPause()
 end
 
 function benchmark.onSimulationResume()
-    benchmark.logfile:write(string.format("# RESUME: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getModelTime()))
+    benchmark.logfile:write(string.format("# RESUME: %s,%.03f\n", os.date("!%Y%m%d-%H%M%SZ"), DCS.getRealTime()))
 end
 
 function benchmark.onSimulationFrame()
-    local now = DCS.getModelTime()
-    if now > 0 then
-        benchmark.logfile:write(string.format("%.0f\n", (now - benchmark.prev_frame) * 1e3))
-        benchmark.prev_frame = now
+    local now = DCS.getRealTime()
+    if benchmark.prev_frame then
+        local now_ms = math.floor(now * 1e3 + 0.5)
+        benchmark.logfile:write(string.format("%.0f\n", now_ms - benchmark.prev_frame))
+        benchmark.prev_frame = now_ms
     end
 
     -- pause mission when benchmark runtime has elapsed
-    if now >= BENCHMARK_RUNTIME and not DCS.getPause() then
+    if benchmark.time_stop and now >= benchmark.time_stop and not DCS.getPause() then
         log.write(_name, log.INFO, "Benchmark runtime elapsed. Pausing mission.")
         DCS.setPause(true)
     end
