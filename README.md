@@ -15,14 +15,14 @@ on a single headless Linux server.
 * Minimal overhead: ~200M RAM on Debian 12.9 (kernel + user-space)
   * Built for headless (non-GUI) Linux servers:
     Does not require a desktop environment (e.g., Gnome, KDE, XFCE, ...)
-  * DCS and SRS windows accessible via VNC (serves minimal GUI)
+  * DCS and SRS windows accessible via VNC
   * Runs Caucasus, Marianas, and Syria on servers with 16G RAM (other terrains unverified)
 * Convenient management of all server processes through systemd user services
   (`systemctl --user start|stop|status dcs-server|srs-server`) and automatic
   restart of failed services (including detection and forced restart of frozen
   servers with an unresponsive WebGUI).
 * Supports multiple DCS server instances (`DCS_server.exe -w DCS.*`) through
-  systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description1~https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description1~https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description)
+  systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description)
 
 
 ## Requirements
@@ -35,7 +35,8 @@ Do not attempt the installation if you lack the required fundamentals!
 * CPU: Depends. `DCS_server.exe` is multi-threaded but heavily bottlenecked by
   its primary thread. Almost any CPU will do for basic missions, but its
   single-thread performance is of utmost importance to maximize the performance
-  ceiling. The included `FPSmon.lua` script will warn about performance issues.
+  ceiling. The included [`FPSmon.lua`](.wine/drive_c/DCS_configs/DCS_defaults/Scripts/Hooks/FPSmon.lua)
+  script will warn about performance issues.
 * RAM: 16G or **more**. 16G should suffice for a single server instance without
   mods on Caucasus. The sky is the limit once multiple instances, mods, and
   larger terrains are involved. Do not use a disk-backed swap partition, use
@@ -52,30 +53,31 @@ DCS 2.9.15.9599. Note that to install a module, you will temporarily need free
 disk space for the sum of both sizes as `DCS_updater.exe` will first download
 all files and then unpack the module.
 
-| Module                 | Installed (GB) | Download (GB) |
-| ---------------------- | -------------- | ------------- |
-| AFGHANISTAN_terrain    |         58.417 |        20.158 |
-| CAUCASUS_terrain       |         11.073 |         3.987 |
-| FALKLANDS_terrain      |         36.498 |        10.455 |
-| GERMANYCW_terrain      |         75.937 |        25.406 |
-| IRAQ_terrain           |         68.854 |        22.786 |
-| KOLA_terrain           |         65.620 |        18.823 |
-| MARIANAISLANDS_terrain |          9.819 |         2.792 |
-| NEVADA_terrain         |          7.090 |         2.327 |
-| NORMANDY_terrain       |         33.542 |        11.319 |
-| PERSIANGULF_terrain    |         22.718 |         7.904 |
-| SINAIMAP_terrain       |         36.211 |        11.280 |
-| SUPERCARRIER           |          0.233 |         0.149 |
-| SYRIA_terrain          |         37.320 |        12.492 |
-| THECHANNEL_terrain     |         17.980 |         6.617 |
-| WORLD                  |         15.322 |         8.276 |
-| WWII-ARMOUR            |          1.109 |         0.460 |
-| **SUM**                |        497.742 |       165.232 |
+| Module ID                    | Installed (GB) | Download (GB) |
+| ---------------------------- | -------------- | ------------- |
+| `AFGHANISTAN_terrain       ` | `      58.417` | `     20.158` |
+| `CAUCASUS_terrain          ` | `      11.073` | `      3.987` |
+| `FALKLANDS_terrain         ` | `      36.498` | `     10.455` |
+| `GERMANYCW_terrain         ` | `      74.077` | `     24.814` |
+| `IRAQ_terrain              ` | `      68.854` | `     22.786` |
+| `KOLA_terrain              ` | `      66.186` | `     18.947` |
+| `MARIANAISLANDSWWII_terrain` | `       6.449` | `      2.159` |
+| `MARIANAISLANDS_terrain    ` | `       9.819` | `      2.792` |
+| `NEVADA_terrain            ` | `       7.090` | `      2.327` |
+| `NORMANDY_terrain          ` | `      33.542` | `     11.319` |
+| `PERSIANGULF_terrain       ` | `      22.718` | `      7.904` |
+| `SINAIMAP_terrain          ` | `      36.210` | `     11.280` |
+| `SUPERCARRIER              ` | `       0.233` | `      0.149` |
+| `SYRIA_terrain             ` | `      37.320` | `     12.492` |
+| `THECHANNEL_terrain        ` | `      17.980` | `      6.617` |
+| `WORLD                     ` | `      16.372` | `      8.801` |
+| `WWII-ARMOUR               ` | `       1.109` | `      0.460` |
+| **Σ**                        | `     503.947` | `    167.446` |
 
 ### Operating System
 
 This has been developed and tested on a Debian 12 "Bookworm" server install
-and will be upgraded the Debian 13 "Trixie" when it releases in ~Q3/25. Most
+and will be upgraded to Debian 13 "Trixie" when it releases in ~Q3/25. Most
 Linux distributions that use systemd should work as well, but changes to
 accomodate the respective package manager, package names, etc. may be required.
 You should enable [automatic updates](https://wiki.debian.org/UnattendedUpgrades)
@@ -151,7 +153,7 @@ You can now open `127.0.0.1:5900` via your local VNC client and should see an
 empty desktop.
 
 Everything is ready for the actual installation. First, decide which terrains
-to install from [this list](https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/).
+to install from above module table or [this list](https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/).
 Then, adjust the `export DCS_TERRAINS=` in below code snippet to contain a
 space-separated list of *Install/Uninstall id* from the list, e.g.,
 `export DCS_TERRAINS="CAUCASUS_terrain MARIANAISLANDS_terrain"`. The updater
