@@ -1,4 +1,4 @@
--- DCS World Standalone Web Console v2025.03.14
+-- DCS World Standalone Web Console v2025.06.23
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -230,16 +230,37 @@ function webcon.http_post(req_path, req_headers, req_body)
     -- net.dostring_in("mission", "return a_do_script(...)")
     elseif lua_state == "*a_do_script" then
         local result, success = net.dostring_in("mission",
-            string.format("return a_do_script(%q)", table.concat({
-                "local success, result = pcall(function () ",
+            string.format("a_do_script(%q)", table.concat({
+                -- FIXME: workaround for broken a_do_script() return value pass-thru
+                --        https://forum.dcs.world/topic/372331-a_do_script-return-value-pass-thru-broken-since-29159408/
+                --"local success, result = pcall(function () ",
+                --req_body,
+                --"\nend)\nif success then return webcon.dump_json(result) else return 'ERROR: ' .. result end"
+                "webcon.a_do_scriturn(function () ",
                 req_body,
-                "\nend)\nif success then return webcon.dump_json(result) else return 'ERROR: ' .. result end"
+                "\nend)"
             }))
         )
         if not success then
             -- net.dostring_in() may return {nil, nil} on client(?), so result could be nil
             return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, "ERROR: " .. tostring(result)
         end
+
+        -- FIXME: workaround for broken a_do_script() return value pass-thru
+        -- read temporary file that contains result
+        local tmp = lfs.tempdir() .. "WebConsole.a_do_script.tmp"
+        local file, err = io.open(tmp, "r")
+        if file == nil then
+            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, string.format("ERROR: Error opening file %q: %s", tmp, err)
+        end
+        local result = file:read("*a")
+        file:close()
+        -- truncate temporary file
+        local file, err = io.open(tmp, "w")
+        if file == nil then
+            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, string.format("ERROR: Error opening file %q: %s", tmp, err)
+        end
+        file:close()
 
         if not result:match("^ERROR:") then
             return "200 OK", {["Content-Type"] = "application/json"}, result
