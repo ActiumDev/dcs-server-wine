@@ -1,4 +1,4 @@
--- DCS World Server Simulation Frame Rate Monitoring Script v0.3
+-- DCS World Server Simulation Frame Rate Monitoring Script v2025.06.26
 -- (c) 2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -54,9 +54,9 @@ local FPSMON_WARN_TIME = tonumber(DCS.getConfigValue("fpsmon_warn_time") or nil)
 --   * file:///C:/%DCS_INSTALL_PATH%/API/DCS_ControlAPI.html
 --   * https://wiki.hoggitworld.com/view/Hoggit_DCS_World_Wiki
 local fpsmon = {}
--- DCS.getModelTime() of first frame in averaging interval
+-- DCS.getRealTime() of first frame in averaging interval
 fpsmon.time_first_frame = 0
--- DCS.getModelTime() of previous frame in averaging interval
+-- DCS.getRealTime() of previous frame in averaging interval
 fpsmon.time_prev_frame = 0
 -- peak frame time encountered in averaging interval (seconds)
 fpsmon.peak_frame_time = 0
@@ -70,13 +70,13 @@ function fpsmon.onSimulationResume()
     -- must restart averaging after resuming from suspension
     fpsmon.num_frames = 0
     fpsmon.peak_frame_time = 0
-    fpsmon.time_first_frame = DCS.getModelTime()
+    fpsmon.time_first_frame = DCS.getRealTime()
     -- FIXME: first _frame_time after resume may be inaccurate
     fpsmon.time_prev_frame = fpsmon.time_first_frame
 end
 
 function fpsmon.onSimulationFrame()
-    local _time_now = DCS.getModelTime()
+    local _time_now = DCS.getRealTime()
 
     -- increment frame counter
     fpsmon.num_frames = fpsmon.num_frames + 1
