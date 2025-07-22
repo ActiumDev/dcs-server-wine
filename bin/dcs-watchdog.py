@@ -42,7 +42,7 @@ while True:
     # query WebGUI
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(1)
+        sock.settimeout(10)
         sock.connect(("127.0.0.1", webgui_port))
         # send a valid encrypted request as issued by WebGUI/app.js.
         # NOTE: b"GET / HTTP/1.1\r\nConnection: close\r\n\r\n" will detect that
