@@ -17,10 +17,6 @@ Type=oneshot
 WorkingDirectory=%h/.wine/drive_c/DCS_server
 ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_updater.exe update
 
-# keep DCS_updater.exe from auto-launching DCS_server.exe (updater resets autoupdate.cfg after update)
-ExecStartPre=/usr/bin/sed -i 's,"bin/DCS_server.exe",null,' %h/.wine/drive_c/DCS_server/autoupdate.cfg
-ExecStopPost=/usr/bin/sed -i 's,"bin/DCS_server.exe",null,' %h/.wine/drive_c/DCS_server/autoupdate.cfg
-
 # (re)start all enabled dcs-server@* instances after updater exited
 # FIXME: starts enabled server instances that were not running before update
 #ExecStopPost=/bin/sh -c "cd %h/.config/systemd/user/default.target.wants ; systemctl --user --no-block start dcs-server@*.service"
