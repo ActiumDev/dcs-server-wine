@@ -15,7 +15,7 @@ on a single headless Linux server.
 * Minimal overhead: ~200M RAM on Debian 12.9 (kernel + user-space)
   * Built for headless (non-GUI) Linux servers:
     Does not require a desktop environment (e.g., Gnome, KDE, XFCE, ...)
-  * DCS and SRS windows accessible via VNC
+  * DCS window accessible via VNC
   * Runs Caucasus, Marianas, and Syria on servers with 16G RAM (other terrains unverified)
 * Convenient management of all server processes through systemd user services
   (`systemctl --user start|stop|status dcs-server|srs-server`) and automatic
@@ -176,9 +176,9 @@ server account with [purchases restricted](https://forum.dcs.world/topic/338207-
 and check both "Save password" and "Auto login" options to enable the DCS
 server to start non-interactively in the future.
 
-The VNC session should now show the DCS splash screen and the SRS server window
-(the SRS window may be hidden behind the DCS window). If so, the DCS server
-should be running on port 10308 (default) and SRS on port 5002 (default).
+The VNC session should now show the DCS splash screen. The SRS server should
+run as a windowless background service. The DCS server should now be running
+on port 10308 (default) and SRS on port 5002 (default).
 The server is unlisted (not public) by default.
 
 You can connect to the server by IP address and port. The default mission will
@@ -204,6 +204,5 @@ systemctl --user restart dcs-server@server1
 
 ## Known Issues
 
-* DCS window hides SRS window: You need to move the DCS window to reveal the SRS window. Should be fixed by switching from sway to labwc once Debian 13 "Trixie" has been released (~Q3/25).
 * VNC screen is sluggish: The used VNC server (wayvnc v0.5) has limited compression support. Should improve once a newer wayvnc version becomes available with Debian 13 "Trixie" release (~Q3/25).
 * Some DCS windows contain HTML code: Could possibly be fixed by installing [Wine Gecko](https://gitlab.winehq.org/wine/wine/-/wikis/Gecko).

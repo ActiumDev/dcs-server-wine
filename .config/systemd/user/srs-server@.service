@@ -3,13 +3,9 @@ Description=SRS Server
 Documentation=https://github.com/ciribob/DCS-SimpleRadioStandalone/
 
 # verify required file and directory structure
-AssertFileNotEmpty=%h/.wine/drive_c/SRS_server/SR-Server.exe
+AssertFileNotEmpty=%h/.wine/drive_c/SRS_server/SRS-Server-Commandline
 AssertFileNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/server.cfg
-AssertPathIsSymbolicLink=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/SR-Server.exe
-
-# depend on shared wineserver (see wineserver.service for details)
-After=wineserver.service
-Requires=wineserver.service
+AssertPathIsSymbolicLink=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/SRS-Server-Commandline
 
 # automatically restart up to 5 times in 10 minutes
 StartLimitIntervalSec=10m
@@ -21,9 +17,6 @@ WantedBy=default.target
 [Service]
 Type=simple
 WorkingDirectory=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS
-# TODO: automatically set SERVER_PORT= in SRS/server.cfg from srsauto_port in
-#       Config/autoexec.cfg via ExecStartPre:
-#       ExecStartPre=grep -E '^srsauto_port\s*=\s*[0-9]+$' %h/.wine/drive_c/DCS_configs/DCS.%i/Config/autoexec.cfg | ...
-ExecStart=/usr/bin/wine SR-Server.exe
+ExecStart=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/SRS-Server-Commandline -c %h/.wine/drive_c/DCS_configs/DCS.%i/SRS/server.cfg
 Restart=always
 RestartSec=1
