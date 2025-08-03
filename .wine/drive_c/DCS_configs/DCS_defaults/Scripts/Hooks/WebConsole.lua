@@ -1,4 +1,4 @@
--- DCS World Standalone Web Console v2025.06.23
+-- DCS World Standalone Web Console v2025.08.03
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -339,7 +339,7 @@ function webcon.onMissionLoadEnd()
     end
 
     -- inject code into other states via net.dostring_in()
-    for _, state in ipairs({"config", "export", "mission", "server"}) do
+    for _, state in ipairs({"config", "export", "mission", "scripting", "server"}) do
         local result, success = net.dostring_in(state, webcon.inject)
         if not success then
             log.write(_name, log.ERROR, string.format("Failed to inject code via net.dostring_in(%q, ...): %s", state, result))
@@ -524,7 +524,7 @@ end
 
 webcon.html = [[
 <!DOCTYPE html>
-<!-- DCS World Standalone Web Console v2025.03.14 -->
+<!-- DCS World Standalone Web Console v2025.08.03 -->
 <!-- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com> -->
 <!-- SPDX-License-Identifier: MIT -->
 <html>
@@ -544,6 +544,7 @@ webcon.html = [[
     <option value="export">export</option>
     <option value="gui">gui (hooks)</option>
     <option value="mission">mission (editor, triggers)</option>
+    <option value="scripting">scripting (undocumented)</option>
     <option value="server">server (undocumented)</option>
 </select>
 <label for="format" title="The return value of the executed code is serialized into this format (Lua not yet implemented)" style="text-decoration: underline; text-decoration-style: dotted;">Format:</label>
