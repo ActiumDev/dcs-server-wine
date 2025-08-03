@@ -59,6 +59,10 @@ cat <<-EOF >${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
 	# bin/zlib1.dll shipped with DCS contains zlib1.ZipOpen2(), which is
 	# missing from Wine built-in zlib1 (as of Wine 8.0 and 9.0)
 	"zlib1"="native"
+
+	# configure tacview file path (shared by all instances)
+	[HKCU\\SOFTWARE\\Raia Software Inc.]
+	"TacviewExportPath"="C:\\\\DCS_configs\\\\Tacview\\\\"
 EOF
 wine reg import ${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
 rm ${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
