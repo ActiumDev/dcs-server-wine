@@ -1,4 +1,4 @@
--- DCS World Server Simulation Frame Rate Monitoring Script v2025.06.26
+-- DCS World Server Simulation Frame Rate Monitoring Script v2025.08.03
 -- (c) 2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -55,9 +55,9 @@ local FPSMON_WARN_TIME = tonumber(DCS.getConfigValue("fpsmon_warn_time") or nil)
 --   * https://wiki.hoggitworld.com/view/Hoggit_DCS_World_Wiki
 local fpsmon = {}
 -- DCS.getRealTime() of first frame in averaging interval
-fpsmon.time_first_frame = 0
+fpsmon.time_first_frame = math.huge
 -- DCS.getRealTime() of previous frame in averaging interval
-fpsmon.time_prev_frame = 0
+fpsmon.time_prev_frame = math.huge
 -- peak frame time encountered in averaging interval (seconds)
 fpsmon.peak_frame_time = 0
 -- number of simulation frames since time_first_frame
@@ -66,14 +66,14 @@ fpsmon.num_frames = 0
 -- name of this script file (used for automatically prefixing log entries)
 local _name = debug.getinfo(1, "S").source:match("[^\\]+%.lua$") or "FPSmon.lua"
 
-function fpsmon.onSimulationResume()
-    -- must restart averaging after resuming from suspension
+-- reset averaging interval when starting or resuming mission
+function fpsmon.onSimulationStart()
     fpsmon.num_frames = 0
     fpsmon.peak_frame_time = 0
     fpsmon.time_first_frame = DCS.getRealTime()
-    -- FIXME: first _frame_time after resume may be inaccurate
     fpsmon.time_prev_frame = fpsmon.time_first_frame
 end
+fpsmon.onSimulationResume = fpsmon.onSimulationStart
 
 function fpsmon.onSimulationFrame()
     local _time_now = DCS.getRealTime()
@@ -83,13 +83,15 @@ function fpsmon.onSimulationFrame()
 
     -- compute _frame_time
     local _frame_time = _time_now - fpsmon.time_prev_frame
-    if _frame_time > fpsmon.peak_frame_time then
+    -- ignore peak frame time immediately after game start
+    if _frame_time > fpsmon.peak_frame_time and DCS.getModelTime() > 10 then
         fpsmon.peak_frame_time = _frame_time
     end
     fpsmon.time_prev_frame = _time_now
 
     -- process results only every FPSMON_INTERVAL seconds
-    if _time_now > fpsmon.time_first_frame + FPSMON_INTERVAL then
+    -- NOTE: onSimulationFrame() may fire while mission is still paused
+    if _time_now > fpsmon.time_first_frame + FPSMON_INTERVAL and not DCS.getPause() then
         local _avg_fps = fpsmon.num_frames / (_time_now - fpsmon.time_first_frame)
 
         -- send chat message and log warning when above/below threshold
@@ -112,6 +114,8 @@ end
 if DCS.isServer() and FPSMON_INTERVAL >= 1 then
     DCS.setUserCallbacks(fpsmon)
     log.write(_name, log.INFO, "Enabled simulation frame rate monitoring.")
+elseif not DCS.isServer() then
+    log.write(_name, log.INFO, "Not enabling simulation frame rate monitoring: Not a server or a singleplayer instance.")
 else
-    log.write(_name, log.INFO, "Not enabling simulation frame rate monitoring: Not a server and/or disabled via fpsmon_interval variable in autoexec.cfg.")
+    log.write(_name, log.INFO, "Not enabling simulation frame rate monitoring: Disabled via fpsmon_interval variable in autoexec.cfg.")
 end
