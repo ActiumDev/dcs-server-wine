@@ -11,6 +11,7 @@ SRS_DLVER=${SRS_DLVER##*/}
 SRS_DIR=${WINEPREFIX:-$HOME/.wine}/drive_c/SRS_server
 SRS_VER=$(cat $SRS_DIR/version.txt 2>/dev/null || true)
 if [ "$SRS_VER" != "$SRS_DLVER" ] ; then
+	mkdir -p "$SRS_DIR"
 	curl -fLo "$SRS_DIR/SRS-Server-Commandline" "$SRS_URL"
 	chmod +x "$SRS_DIR/SRS-Server-Commandline"
 	echo $SRS_DLVER >$SRS_DIR/version.txt

@@ -17,7 +17,6 @@ if ! systemctl --user --quiet is-active sway ; then
 fi
 
 # redirect new windows to headless GUI session (winecfg)
-export $(systemctl --user show-environment | grep -m1 ^DISPLAY=)
 export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
 
 # configure Wine

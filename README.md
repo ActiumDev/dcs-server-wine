@@ -199,6 +199,15 @@ systemctl --user restart dcs-server@server1
 ```
 
 
-## Known Issues
+## Troubleshooting
 
-* Some DCS windows contain HTML code: Could possibly be fixed by installing [Wine Gecko](https://gitlab.winehq.org/wine/wine/-/wikis/Gecko).
+### Installation fails with `wine: could not load kernel32.dll, status c0000135`
+
+The WINEPREFIX directory `~/.wine` is broken. Reinitialize and then re-run the
+installer as follows:
+```sh
+export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
+rm ~/.wine/.update-timestamp
+wineboot --init
+~/.wine/drive_c/install_dcs.sh
+```
