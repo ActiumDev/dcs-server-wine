@@ -12,11 +12,11 @@ on a single headless Linux server.
   * Pre-configured with [reasonable defaults](./.wine/drive_c/DCS_configs/DCS_defaults/Config/)
   * Auto-starts a default mission (Caucasus with dynamic spawns)
   * Ships with [useful helper scripts](./.wine/drive_c/DCS_configs/DCS_defaults/Scripts/Hooks/)
-* Minimal overhead: ~200M RAM on Debian 12.9 (kernel + user-space)
+* Minimal overhead: ~200M RAM on Debian 13.0 (kernel + user-space)
   * Built for headless (non-GUI) Linux servers:
     Does not require a desktop environment (e.g., Gnome, KDE, XFCE, ...)
   * DCS window accessible via VNC
-  * Runs Caucasus, Marianas, and Syria on servers with 16G RAM (other terrains unverified)
+  * Runs Caucasus and Marianas on servers with 8G RAM (more for other terrains)
 * Convenient management of all server processes through systemd user services
   (`systemctl --user start|stop|status dcs-server|srs-server`) and automatic
   restart of failed services (including detection and forced restart of frozen
@@ -36,8 +36,8 @@ Do not attempt the installation if you lack the required fundamentals!
   its primary thread. Almost any CPU will do for basic missions, but its
   single-thread performance is of utmost importance to maximize the performance
   ceiling. The included [`FPSmon.lua`](.wine/drive_c/DCS_configs/DCS_defaults/Scripts/Hooks/FPSmon.lua)
-  script will warn about performance issues.
-* RAM: 16G or **more**. 16G should suffice for a single server instance without
+  script will warn about performance issues in global chat by default.
+* RAM: 8G or **more**. 8G should suffice for a single server instance without
   mods on Caucasus. The sky is the limit once multiple instances, mods, and
   larger terrains are involved. Do not use a disk-backed swap partition, use
   [zram](https://packages.debian.org/stable/systemd-zram-generator) instead.
@@ -46,39 +46,37 @@ Do not attempt the installation if you lack the required fundamentals!
   [transparent file compression](https://btrfs.readthedocs.io/en/latest/Compression.html)
   may be an option.
 * Network: 1 Gbps link in a datacenter. At least 100 Mbps at home.
-  The CDN used by `DCS_updater.exe` currently throttles downloads at ~25 MB/s.
 
 Dedicated server module names and respective installed and download sizes as of
-DCS 2.9.15.9599. Note that to install a module, you will temporarily need free
+DCS 2.9.18.12899. Note that to install a module, you will temporarily need free
 disk space for the sum of both sizes as `DCS_updater.exe` will first download
 all files and then unpack the module.
 
 | Module ID                    | Installed (GB) | Download (GB) |
 | ---------------------------- | -------------- | ------------- |
-| `AFGHANISTAN_terrain       ` | `      58.417` | `     20.158` |
-| `CAUCASUS_terrain          ` | `      11.073` | `      3.987` |
-| `FALKLANDS_terrain         ` | `      36.498` | `     10.455` |
-| `GERMANYCW_terrain         ` | `      74.077` | `     24.814` |
-| `IRAQ_terrain              ` | `      68.854` | `     22.786` |
-| `KOLA_terrain              ` | `      66.186` | `     18.947` |
-| `MARIANAISLANDSWWII_terrain` | `       6.449` | `      2.159` |
-| `MARIANAISLANDS_terrain    ` | `       9.819` | `      2.792` |
-| `NEVADA_terrain            ` | `       7.090` | `      2.327` |
-| `NORMANDY_terrain          ` | `      33.542` | `     11.319` |
-| `PERSIANGULF_terrain       ` | `      22.718` | `      7.904` |
-| `SINAIMAP_terrain          ` | `      36.210` | `     11.280` |
-| `SUPERCARRIER              ` | `       0.233` | `      0.149` |
-| `SYRIA_terrain             ` | `      37.320` | `     12.492` |
-| `THECHANNEL_terrain        ` | `      17.980` | `      6.617` |
-| `WORLD                     ` | `      16.372` | `      8.801` |
-| `WWII-ARMOUR               ` | `       1.109` | `      0.460` |
-| **Σ**                        | `     503.947` | `    167.446` |
+| `AFGHANISTAN_terrain`        |           58.4 |          20.2 |
+| `CAUCASUS_terrain`           |           11.1 |           4.0 |
+| `FALKLANDS_terrain`          |           36.5 |          10.5 |
+| `GERMANYCW_terrain`          |           73.9 |          24.7 |
+| `IRAQ_terrain`               |           68.9 |          22.8 |
+| `KOLA_terrain`               |           66.2 |          18.9 |
+| `MARIANAISLANDSWWII_terrain` |            6.4 |           2.2 |
+| `MARIANAISLANDS_terrain`     |            9.8 |           2.8 |
+| `NEVADA_terrain`             |            7.1 |           2.3 |
+| `NORMANDY_terrain`           |           33.5 |          11.3 |
+| `PERSIANGULF_terrain`        |           22.7 |           7.9 |
+| `SINAIMAP_terrain`           |           39.8 |          12.6 |
+| `SUPERCARRIER`               |            0.2 |           0.1 |
+| `SYRIA_terrain`              |           37.3 |          12.5 |
+| `THECHANNEL_terrain`         |           18.0 |           6.6 |
+| `WORLD`                      |           16.4 |           8.8 |
+| `WWII-ARMOUR`                |            1.1 |           0.5 |
+| **Σ**                        |          507.4 |         168.7 |
 
 ### Operating System
 
-This has been developed and tested on a Debian 12 "Bookworm" server install
-and will be upgraded to Debian 13 "Trixie" when it releases in ~Q3/25. Most
-Linux distributions that use systemd should work as well, but changes to
+This has been developed and tested on a Debian 13 "Trixie" server install.
+Most Linux distributions that use systemd should work as well, but changes to
 accomodate the respective package manager, package names, etc. may be required.
 You should enable [automatic updates](https://wiki.debian.org/UnattendedUpgrades)
 to keep your server secure.
@@ -120,8 +118,7 @@ Run via `ssh root@server`:
 # TODO: adjust this if your server does not run Debian
 sudo dpkg --add-architecture i386 && sudo apt update
 sudo apt install --no-install-recommends \
-	curl fonts-liberation git wine wine32 wine64 python3-minimal \
-	sway unzip wayvnc xwayland
+	curl git wine wine32:i386 wine64 python3-minimal sway unzip wayvnc
 # Create a separate user account for the DCS server and enable persistent
 # systemd user services for it (exemplary user name, change at will)
 sudo useradd -m -s /bin/bash -G render,video dcs
@@ -138,10 +135,10 @@ cd ~
 git init -b main ~
 git remote add origin https://github.com/ActiumDev/dcs-server-wine.git
 git pull origin main
-# start basic services: minimal GUI, VNC server, Wine server
+# start basic services: minimal GUI, VNC server
 # TODO: replace 5900 with your desired, locally bound VNC port
 systemctl --user daemon-reload
-systemctl --user enable --now sway wayvnc@5900 wine-session@.wine
+systemctl --user enable --now sway wayvnc@5900
 ```
 
 The DCS user account should now be running the minimal GUI, which is accessible
@@ -177,7 +174,7 @@ and check both "Save password" and "Auto login" options to enable the DCS
 server to start non-interactively in the future.
 
 The VNC session should now show the DCS splash screen. The SRS server should
-run as a windowless background service. The DCS server should now be running
+run as a windowless background service. The DCS server should now be listening
 on port 10308 (default) and SRS on port 5002 (default).
 The server is unlisted (not public) by default.
 
@@ -204,5 +201,4 @@ systemctl --user restart dcs-server@server1
 
 ## Known Issues
 
-* VNC screen is sluggish: The used VNC server (wayvnc v0.5) has limited compression support. Should improve once a newer wayvnc version becomes available with Debian 13 "Trixie" release (~Q3/25).
 * Some DCS windows contain HTML code: Could possibly be fixed by installing [Wine Gecko](https://gitlab.winehq.org/wine/wine/-/wikis/Gecko).

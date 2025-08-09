@@ -3,11 +3,12 @@ include /etc/sway/config-vars.d/*
 # DCS_server.exe splash screen size is 1024x768
 output HEADLESS-1 resolution 1280x800
 
-# start Xwayland now (so we can export DISPLAY later)
-xwayland force
+# disable Xwayland (Wine 10+ uses wayland natively by default)
+xwayland disable
 
-# force tabbed layout
+# force tabbed layout and floating windows by default
 workspace_layout tabbed
+for_window [app_id=".*"] floating enable
 
 ### Key bindings
 #
