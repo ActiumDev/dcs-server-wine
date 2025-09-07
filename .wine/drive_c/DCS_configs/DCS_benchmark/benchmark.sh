@@ -1,5 +1,10 @@
 #!/bin/sh -eu
 
+# if DCS.benchmark writedir does not exist, initialize from template DCS_benchmark
+if ! -d "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs/DCS.benchmark" ; then
+	cp -a "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs/DCS_benchmark" "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs/DCS.benchmark"
+fi
+
 # retrieve system information
 . /etc/os-release
 CPU_NAME=$(grep -m1 "^model name" /proc/cpuinfo)
