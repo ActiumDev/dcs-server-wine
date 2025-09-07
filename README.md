@@ -48,13 +48,14 @@ Do not attempt the installation if you lack the required fundamentals!
 * Network: 1 Gbps link in a datacenter. At least 100 Mbps at home.
 
 Dedicated server module names and respective installed and download sizes as of
-DCS 2.9.18.12899. Note that to install a module, you will temporarily need free
+DCS 2.9.19.13478. Note that to install a module, you will temporarily need free
 disk space for the sum of both sizes as `DCS_updater.exe` will first download
 all files and then unpack the module.
 
+
 | Module ID                    | Installed (GB) | Download (GB) |
 | ---------------------------- | -------------- | ------------- |
-| `AFGHANISTAN_terrain`        |           58.4 |          20.2 |
+| `AFGHANISTAN_terrain`        |           59.7 |          20.7 |
 | `CAUCASUS_terrain`           |           11.1 |           4.0 |
 | `FALKLANDS_terrain`          |           36.5 |          10.5 |
 | `GERMANYCW_terrain`          |           73.9 |          24.7 |
@@ -69,9 +70,9 @@ all files and then unpack the module.
 | `SUPERCARRIER`               |            0.2 |           0.1 |
 | `SYRIA_terrain`              |           37.3 |          12.5 |
 | `THECHANNEL_terrain`         |           18.0 |           6.6 |
-| `WORLD`                      |           16.4 |           8.8 |
+| `WORLD`                      |           17.8 |           9.6 |
 | `WWII-ARMOUR`                |            1.1 |           0.5 |
-| **Σ**                        |          507.4 |         168.7 |
+| **Σ**                        |      **510.1** |     **170.0** |
 
 ### Operating System
 
