@@ -28,7 +28,6 @@ if ! systemctl --user --quiet is-active sway ; then
 fi
 
 # redirect new windows to headless GUI session
-export $(systemctl --user show-environment | grep -m1 ^DISPLAY=)
 export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
 
 # start DCS server with suppressed log output
