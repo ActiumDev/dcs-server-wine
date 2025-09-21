@@ -48,31 +48,30 @@ Do not attempt the installation if you lack the required fundamentals!
 * Network: 1 Gbps link in a datacenter. At least 100 Mbps at home.
 
 Dedicated server module names and respective installed and download sizes as of
-DCS 2.9.19.13478. Note that to install a module, you will temporarily need free
+DCS 2.9.20.15010. Note that to install a module, you will temporarily need free
 disk space for the sum of both sizes as `DCS_updater.exe` will first download
 all files and then unpack the module.
-
 
 | Module ID                    | Installed (GB) | Download (GB) |
 | ---------------------------- | -------------- | ------------- |
 | `AFGHANISTAN_terrain`        |           59.7 |          20.7 |
 | `CAUCASUS_terrain`           |           11.1 |           4.0 |
-| `FALKLANDS_terrain`          |           36.5 |          10.5 |
+| `FALKLANDS_terrain`          |           37.7 |          10.8 |
 | `GERMANYCW_terrain`          |           73.9 |          24.7 |
-| `IRAQ_terrain`               |           68.9 |          22.8 |
+| `IRAQ_terrain`               |           69.3 |          22.8 |
 | `KOLA_terrain`               |           66.2 |          18.9 |
 | `MARIANAISLANDSWWII_terrain` |            6.4 |           2.2 |
 | `MARIANAISLANDS_terrain`     |            9.8 |           2.8 |
 | `NEVADA_terrain`             |            7.1 |           2.3 |
 | `NORMANDY_terrain`           |           33.5 |          11.3 |
 | `PERSIANGULF_terrain`        |           22.7 |           7.9 |
-| `SINAIMAP_terrain`           |           39.8 |          12.6 |
+| `SINAIMAP_terrain`           |           45.3 |          15.5 |
 | `SUPERCARRIER`               |            0.2 |           0.1 |
 | `SYRIA_terrain`              |           37.3 |          12.5 |
 | `THECHANNEL_terrain`         |           18.0 |           6.6 |
-| `WORLD`                      |           17.8 |           9.6 |
+| `WORLD`                      |           18.3 |           9.8 |
 | `WWII-ARMOUR`                |            1.1 |           0.5 |
-| **Σ**                        |      **510.1** |     **170.0** |
+| **Σ**                        |      **517.8** |     **173.5** |
 
 ### Operating System
 
