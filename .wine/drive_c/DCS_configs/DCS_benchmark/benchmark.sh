@@ -1,7 +1,7 @@
 #!/bin/sh -eu
 
 # if DCS.benchmark writedir does not exist, initialize from template DCS_benchmark
-if ! -d "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs/DCS.benchmark" ; then
+if [ ! -d "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs/DCS.benchmark" ] ; then
 	cp -a "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs/DCS_benchmark" "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs/DCS.benchmark"
 fi
 
