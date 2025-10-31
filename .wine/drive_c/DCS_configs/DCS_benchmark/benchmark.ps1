@@ -7,7 +7,7 @@ $proc_priority = "Normal"
 
 # export environment variables required by Benchmark.lua
 $gci = Get-ComputerInfo
-$env:BENCHMARK_MISSION = "Benchmark_150_v2024.11.23.miz"
+$env:BENCHMARK_MISSION = "Benchmark_200_v2024.11.23.miz"
 $env:BENCHMARK_ROUNDS = 10
 $env:BENCHMARK_RUNTIME = 300
 $env:OS_NAME = $gci.OsName

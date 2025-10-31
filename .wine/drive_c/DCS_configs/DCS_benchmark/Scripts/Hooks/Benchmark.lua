@@ -1,4 +1,4 @@
--- DCS World Benchmark Mode v2025.05.31
+-- DCS World Benchmark Mode v2025.10.31
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -139,7 +139,8 @@ if BENCHMARK_MISSION ~= nil then
 
     -- open benchmark log file
     local timestamp = os.date("!%Y%m%d-%H%M%SZ")
-    benchmark.logfile_name = lfs.writedir() .. "Logs\\Benchmark-" .. timestamp .. ".log"
+    benchmark.logfile_name = string.format("%sLogs\\Benchmark-%s-%s.log",
+        lfs.writedir(), __DCS_VERSION__ or "nil", timestamp)
     benchmark.logfile = io.open(benchmark.logfile_name, "a")
     log.write(_name, log.INFO, "Opened benchmark log file: " .. benchmark.logfile_name)
 
