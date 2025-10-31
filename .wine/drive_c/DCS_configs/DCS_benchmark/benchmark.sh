@@ -32,4 +32,37 @@ export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
 
 # start DCS server with suppressed log output
 cd "${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_server"
-wine start /b /wait bin/DCS_server.exe -w DCS.benchmark
+wine start /b /wait bin/DCS_server.exe -w DCS.benchmark &
+sleep 10
+
+# record CPU and RAM usage
+python3 <<EOF
+import os
+from pathlib import Path
+import time
+
+SC_CLK_TCK   = os.sysconf(os.sysconf_names["SC_CLK_TCK"])
+SC_PAGE_SIZE = os.sysconf(os.sysconf_names["SC_PAGE_SIZE"])
+
+# find process
+path_stat = None
+for path_pid in Path("/proc").iterdir():
+        if not path_pid.stem.isdecimal():
+                continue
+        cmdline = (path_pid / "cmdline").read_bytes()
+        if cmdline.startswith(b"C:\\\\DCS_server\\\\bin\\\\DCS_server.exe\\0-w\\0DCS.benchmark\\0"):
+                path_stat = path_pid / "stat"
+
+# poll /proc/PID/stat
+rss_max = 0
+while path_stat.exists():
+	# https://www.man7.org/linux/man-pages/man5/proc_pid_stat.5.html
+        stat = path_stat.read_text().split()
+        cpu_user = int(stat[13]) / SC_CLK_TCK
+        cpu_sys  = int(stat[14]) / SC_CLK_TCK
+        rss      = int(stat[23]) * SC_PAGE_SIZE
+        if rss > rss_max:
+                rss_max = rss
+        print(f'# STATS: {{"CPU_TIME_SYSTEM":{cpu_sys},"CPU_TIME_USER":{cpu_user},"RAM_PEAK_BYTES":{rss_max}}}')
+        time.sleep(1)
+EOF
