@@ -1,4 +1,4 @@
--- DCS World Standalone Web Console v2025.08.03
+-- DCS World Standalone Web Console v2025.11.09
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -675,7 +675,7 @@ function exec_or_cancel() {
     }
 
     // send new request
-    xhr.open("POST", "/execute", true);
+    xhr.open("POST", "execute", true);
     xhr.setRequestHeader("Accept", format.value);
     xhr.setRequestHeader("Content-Type", "application/lua");
     xhr.setRequestHeader("X-Lua-State", lua_state.value);
