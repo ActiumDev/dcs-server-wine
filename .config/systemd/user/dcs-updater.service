@@ -16,6 +16,7 @@ Requires=wineserver.service
 Type=oneshot
 WorkingDirectory=%h/.wine/drive_c/DCS_server
 ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_updater.exe update
+ExecStartPost=-/usr/bin/patch -d %h/.wine/drive_c/DCS_server -i ../MissionScripting.lua.patch -p0 --forward --batch
 
 # (re)start all enabled dcs-server@* instances after updater exited
 # FIXME: starts enabled server instances that were not running before update

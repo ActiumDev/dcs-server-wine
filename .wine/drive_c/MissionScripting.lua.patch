@@ -1,0 +1,72 @@
+--- Scripts/MissionScripting.lua~	2025-11-09 22:28:17.443923033 +0000
++++ Scripts/MissionScripting.lua	2025-11-09 22:28:27.768351338 +0000
+@@ -2,6 +2,69 @@
+ 
+ dofile('Scripts/ScriptingSystem.lua')
+ 
++---BEGIN-MISSION-SCRIPTING-EXPLOIT-MITIGATION---
++-- insert this block into %DCS_INSTALL%/Scripts/MissionScripting.lua above:
++-- --Sanitize Mission Scripting environment
++-- mitigate arbitrary code execution vulnerability with a wrapper for
++-- `net.dostring_in()` that restricts its access to the "mission" Lua state.
++-- accessing the "mission" Lua state is required for some advanced scripting:
++--   * https://forum.dcs.world/topic/354648-add-setlife-function-to-lua-api/
++--   * https://forum.dcs.world/topic/358877-lua-function-unitsetlife/
++--   * https://forum.dcs.world/topic/371036-outpicturefor-lua-mission-scripting-functions/#findComment-5672179
++-- this copies `net.dostring_in()` into a lexically scoped local variable and
++-- then overwrites the original function with a wrapper, which captures the
++-- local exclusively, because Lua is scoped lexically:
++-- https://www.lua.org/pil/6.1.html
++local _dostring_in = net.dostring_in
++function net.dostring_in(lua_state, code)
++	if lua_state == "mission" then
++		local _result, _success = _dostring_in("mission", code)
++		return _result, _success
++	elseif lua_state == "config" or lua_state == "export" or lua_state == "gui"
++	or lua_state == "scripting" or lua_state == "server" then
++		log.write("MissionScripting.lua", log.ERROR, string.format(
++			"Blocked exploitable net.dostring_in(%q, ...) call.", lua_state))
++		return "Access to this state is blocked (exploit mitigation)", false
++	else
++		return "Invalid state name", false
++	end
++end
++---END-MISSION-SCRIPTING-EXPLOIT-MITIGATION---
++
++---BEGIN-WEBCONSOLE-MISSION-SCRIPTING-HELPER---
++-- insert this block into %DCS_INSTALL%/Scripts/MissionScripting.lua above:
++-- --Sanitize Mission Scripting environment
++if webcon == nil then _G.webcon = {} end
++-- webcon.a_do_scriturn() requires io.open() and lfs.tempdir(). however, these
++-- functions are sanitized below for security reasons and not available within
++-- the mission scripting environment. disabling the sanitization renders DCS
++-- vulernable to exploits, including the execution of arbitrary code with the
++-- permissions of the user account that runs DCS.
++-- instead of disabling sanitization, create locals that contain the required
++-- function (or its static return value). these locals go out of scope at the
++-- end of this file, but are captured by webcon.a_do_scriturn(), because Lua
++-- is lexically scoped: https://www.lua.org/pil/6.1.html
++local _open = io.open
++local _temp = lfs.tempdir() .. "WebConsole.a_do_script.tmp"
++-- pcall() wrapper that serializes return value or error message into file as
++-- a workaround for a_do_script() lacking return value pass-thru.
++function webcon.a_do_scriturn(func, maxdepth)
++	local file, err = _open(_temp, "w")
++	if file == nil then
++		log.write("MissionScripting.lua", log.ERROR, err)
++		return
++	end
++
++	local success, result_or_errmsg = pcall(func)
++	if success then
++		file:write(webcon.dump_json(result_or_errmsg))
++	else
++		file:write("ERROR: " .. result_or_errmsg)
++	end
++	file:close()
++end
++---END-WEBCONSOLE-MISSION-SCRIPTING-HELPER---
++
+ --Sanitize Mission Scripting environment
+ --This makes unavailable some unsecure functions. 
+ --Mission downloaded from server to client may contain potentialy harmful lua code that may use these functions.

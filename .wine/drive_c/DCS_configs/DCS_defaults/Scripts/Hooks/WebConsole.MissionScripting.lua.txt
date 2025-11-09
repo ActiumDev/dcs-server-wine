@@ -18,16 +18,16 @@ local _temp = lfs.tempdir() .. "WebConsole.a_do_script.tmp"
 function webcon.a_do_scriturn(func, maxdepth)
 	local file, err = _open(_temp, "w")
 	if file == nil then
-		log.write("MissionScripting.lua", log.ERROR, string.format("Error opening %q: %s", _temp, err))
+		log.write("MissionScripting.lua", log.ERROR, err)
 		return
 	end
 
-        local success, result_or_errmsg = pcall(func)
-        if success then
-            file:write(webcon.dump_json(result_or_errmsg))
-        else
-            file:write("ERROR: " .. result_or_errmsg)
-        end
+	local success, result_or_errmsg = pcall(func)
+	if success then
+		file:write(webcon.dump_json(result_or_errmsg))
+	else
+		file:write("ERROR: " .. result_or_errmsg)
+	end
 	file:close()
 end
 ---END-WEBCONSOLE-MISSION-SCRIPTING-HELPER---
