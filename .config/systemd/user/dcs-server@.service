@@ -67,3 +67,6 @@ RestartSec=15
 # https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#ExecStop=
 ExecStop=/bin/sh -c "if [ ! $MAINPID ] ; then exit ; fi ; if [ -e \"$DCS_LOCK_FILE\" ] ; then wine taskkill /pid $(cat \"$DCS_LOCK_FILE\") ; else kill -TERM $MAINPID ; fi ; while [ -e /proc/$MAINPID ] ; do sleep 1 ; done"
 TimeoutStopSec=60
+
+# clean up temporary directory
+ExecStopPost=/usr/bin/rm -rf %h/.wine/drive_c/users/%u/AppData/Local/Temp/DCS.%i/

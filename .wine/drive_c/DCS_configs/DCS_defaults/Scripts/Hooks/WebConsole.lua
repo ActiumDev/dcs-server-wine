@@ -1,4 +1,4 @@
--- DCS World Standalone Web Console v2025.11.09
+-- DCS World Standalone Web Console v2025.11.10
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -236,9 +236,9 @@ function webcon.http_post(req_path, req_headers, req_body)
                 --"local success, result = pcall(function () ",
                 --req_body,
                 --"\nend)\nif success then return webcon.dump_json(result) else return 'ERROR: ' .. result end"
-                "webcon.a_do_scriturn(function () ",
+                "local _func = function () ",
                 req_body,
-                "\nend)"
+                "\nend\nif webcon and webcon.a_do_scriturn then webcon.a_do_scriturn(_func) else _func() end"
             }))
         )
         if not success then
@@ -251,14 +251,14 @@ function webcon.http_post(req_path, req_headers, req_body)
         local tmp = lfs.tempdir() .. "WebConsole.a_do_script.tmp"
         local file, err = io.open(tmp, "r")
         if file == nil then
-            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, string.format("ERROR: Error opening file %q: %s", tmp, err)
+            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, "ERROR: " .. err
         end
         local result = file:read("*a")
         file:close()
         -- truncate temporary file
         local file, err = io.open(tmp, "w")
         if file == nil then
-            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, string.format("ERROR: Error opening file %q: %s", tmp, err)
+            return "500 Internal Server Error", {["Content-Type"] = "text/plain"}, "ERROR: " .. err
         end
         file:close()
 
