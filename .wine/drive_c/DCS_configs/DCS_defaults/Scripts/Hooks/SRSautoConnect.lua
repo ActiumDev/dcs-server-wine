@@ -1,4 +1,4 @@
--- DCS World Simplified SRS Server-Side Autoconnect Script v2025.07.26
+-- DCS World Simplified SRS Server-Side Autoconnect Script v2025.11.01
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -28,6 +28,7 @@ end
 srsauto.onPlayerChangeSlot = srsauto.onPlayerConnect
 
 if DCS.isServer() then
+    -- parse SRS server port from its config
     local _fh = io.open(lfs.writedir() .. "SRS\\server.cfg", "r")
     if _fh ~= nil then
         for line in _fh:lines() do
@@ -37,8 +38,14 @@ if DCS.isServer() then
             end
         end
     end
-    DCS.setUserCallbacks(srsauto)
-    log.write(_name, log.INFO, "Enabled SRS auto connect messages.")
+
+    -- register callback
+    if srsauto.port ~= nil then
+        DCS.setUserCallbacks(srsauto)
+        log.write(_name, log.INFO, "Enabled SRS auto connect messages.")
+    else
+        log.write(_name, log.ERROR, "Disabled SRS auto connect messages. Failed to parse SERVER_PORT in SRS/server.cfg.")
+    end
 else
-    log.write(_name, log.WARNING, "Disabled SRS auto connect messages. Not a server instance or autoexec.cfg variables srsauto_addr and/or srsauto_port unset or invalid.")
+    log.write(_name, log.WARNING, "Disabled SRS auto connect messages. Not a server instance.")
 end
