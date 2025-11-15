@@ -18,6 +18,7 @@
 .wine/drive_c/DCS_configs/DCS.*
 .wine/drive_c/DCS_configs/Tacview/*.acmi
 .wine/drive_c/DCS_server
+.wine/drive_c/Olympus
 .wine/drive_c/Program*
 .wine/drive_c/SRS_server
 .wine/drive_c/users

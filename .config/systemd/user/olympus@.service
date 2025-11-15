@@ -1,0 +1,36 @@
+[Unit]
+Description=Olympus Frontend NodeJS Server (WILL CRASH DCS!)
+Documentation=https://github.com/Pax1601/DCSOlympus/
+
+# inhibit uninformed activation of this service with a "feature" flag, because
+# enabling the Olympus backend crashes Wine due to an unimplemented function:
+#   * `wine: Unimplemented function httpapi.dll.HttpShutdownRequestQueue called at address 00006FFFFF3BD887 (thread 02c4), starting debugger...`
+#   * https://learn.microsoft.com/en-us/windows/win32/api/http/nf-http-httpshutdownrequestqueue
+#   * https://gitlab.winehq.org/wine/wine/-/blob/wine-10.18/dlls/httpapi/httpapi.spec?ref_type=tags#L33
+# TODO: find fix/workaround for wine httpapi function stub
+AssertPathExists=%h/ENABLE_OLYMPUS_AND_CRASH
+
+# verify required file and directory structure
+AssertDirectoryNotEmpty=%h/.wine/drive_c/Olympus
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i/Olympus/olympus.json
+
+# olympus must be started before DCS (see below)
+Before=dcs-server@%i.service
+
+[Install]
+WantedBy=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/.wine/drive_c/Olympus/Mods/Services/Olympus/frontend
+ExecStart=/usr/bin/node build/www.js -c %h/.wine/drive_c/DCS_configs/DCS.%i/Olympus/olympus.json
+Restart=always
+RestartSec=1
+
+# dynamically link Olympus into server writedir when starting the frontend to
+# prevent the backend from running without the frontend.
+# NOTE: this service must be started before the related dcs-server@.service
+ExecStartPre=/usr/bin/ln -s ../../../../Olympus/Mods/Services/Olympus %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Services/Olympus
+ExecStartPre=/usr/bin/ln -s ../../../../Olympus/Scripts/Hooks/OlympusHook.lua %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/Hooks/OlympusHook.lua
+ExecStopPost=/usr/bin/rm %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Services/Olympus
+ExecStopPost=/usr/bin/rm %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/Hooks/OlympusHook.lua

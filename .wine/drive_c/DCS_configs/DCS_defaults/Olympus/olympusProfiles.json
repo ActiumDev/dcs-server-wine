@@ -1,0 +1,606 @@
+{
+  "Game master": {
+    "mapOptions": {
+      "hideGroupMembers": true,
+      "hideUnitsShortRangeRings": true,
+      "showUnitContacts": true,
+      "showUnitPaths": true,
+      "showUnitTargets": true,
+      "showUnitLabels": true,
+      "showUnitsEngagementRings": true,
+      "showUnitsAcquisitionRings": true,
+      "showUnitsTemporaryEngagementRings": true,
+      "showRacetracks": true,
+      "fillSelectedRing": false,
+      "showMinimap": false,
+      "protectDCSUnits": true,
+      "cameraPluginPort": 3003,
+      "cameraPluginRatio": 1,
+      "cameraPluginEnabled": false,
+      "cameraPluginMode": "map",
+      "AWACSMode": false,
+      "AWACSCoalition": "blue",
+      "hideChromeWarning": false,
+      "hideSecureWarning": false,
+      "showMissionDrawings": false,
+      "showMissionNavpoints": false,
+      "clusterGroundUnits": true,
+      "showUnitCallsigns": true
+    },
+    "shortcuts": {
+      "measure": {
+        "label": "Toggle measurement tool",
+        "code": "KeyM",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "clearMeasures": {
+        "label": "Clear measures",
+        "code": "Comma",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "toggleUnitLabels": {
+        "label": "Hide/show labels",
+        "code": "KeyL",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "toggleAcquisitionRings": {
+        "label": "Hide/show acquisition rings",
+        "code": "KeyE",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "toggleEngagementRings": {
+        "label": "Hide/show engagement rings",
+        "code": "KeyQ",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "toggleHideShortEngagementRings": {
+        "label": "Hide/show short range rings",
+        "code": "KeyR",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "toggleDetectionLines": {
+        "label": "Hide/show detection lines",
+        "code": "KeyF",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "toggleGroupMembers": {
+        "label": "Hide/show group members",
+        "code": "KeyG",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "toggleSelectionEnabled": {
+        "label": "Toggle box selection",
+        "code": "ShiftLeft",
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "increaseCameraZoom": {
+        "label": "Increase camera zoom",
+        "code": "Equal",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "decreaseCameraZoom": {
+        "label": "Decrease camera zoom",
+        "code": "Minus",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "STOPHotkey": {
+        "label": "Stop unit",
+        "code": "Space"
+      },
+      "DELETEHotkey": {
+        "label": "Delete unit",
+        "code": "Delete",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "EXPLODEHotkey": {
+        "label": "Explode unit",
+        "code": "Delete",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "CENTER_MAPHotkey": {
+        "label": "Center map",
+        "code": "KeyM",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "REFUELHotkey": {
+        "label": "Refuel at tanker",
+        "code": "KeyR",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "FOLLOWHotkey": {
+        "label": "Follow unit",
+        "code": "KeyF",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "BOMBHotkey": {
+        "label": "Precision bomb location",
+        "code": "KeyB",
+        "shiftKey": false,
+        "ctrlKey": false
+      },
+      "CARPET_BOMBHotkey": {
+        "label": "Carpet bomb location",
+        "code": "KeyH",
+        "shiftKey": false,
+        "ctrlKey": false
+      },
+      "LANDHotkey": {
+        "label": "Land",
+        "code": "KeyL",
+        "shiftKey": false,
+        "ctrlKey": false
+      },
+      "LAND_AT_POINTHotkey": {
+        "label": "Land at location",
+        "code": "KeyK",
+        "shiftKey": false,
+        "ctrlKey": false
+      },
+      "GROUPHotkey": {
+        "label": "Group ground units",
+        "code": "KeyG",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "ATTACKHotkey": {
+        "label": "Attack unit",
+        "code": "KeyZ",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "FIRE_AT_AREAHotkey": {
+        "label": "Fire at area",
+        "code": "KeyV",
+        "shiftKey": false,
+        "ctrlKey": false
+      },
+      "FIRE_LASERHotkey": {
+        "label": "Shine laser at point",
+        "code": "KeyL",
+        "shiftKey": false,
+        "ctrlKey": true
+      },
+      "FIRE_INFRAREDHotkey": {
+        "label": "Shine infrared at point",
+        "code": "KeyL",
+        "shiftKey": false,
+        "ctrlKey": true
+      },
+      "SIMULATE_FIRE_FIGHTHotkey": {
+        "label": "Simulate fire fight",
+        "code": "KeyX",
+        "shiftKey": false,
+        "ctrlKey": false
+      },
+      "SET_AWACS_REFERENCEHotkey": {
+        "label": "Set AWACS reference",
+        "code": "KeyU",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "CLONEHotkey": {
+        "label": "Clone unit",
+        "code": "KeyC",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "panUp": {
+        "label": "Pan map up",
+        "code": "KeyW",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "panDown": {
+        "label": "Pan map down",
+        "code": "KeyS",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "panLeft": {
+        "label": "Pan map left",
+        "code": "KeyA",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "panRight": {
+        "label": "Pan map right",
+        "code": "KeyD",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "panFast": {
+        "label": "Pan map fast",
+        "code": "ShiftLeft",
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "togglePause": {
+        "label": "Pause data update",
+        "code": "Enter"
+      },
+      "selectAll": {
+        "label": "Select all units",
+        "code": "KeyA",
+        "ctrlKey": true,
+        "shiftKey": false,
+        "altKey": false
+      },
+      "copyUnits": {
+        "label": "Copy units",
+        "code": "KeyC",
+        "ctrlKey": true,
+        "shiftKey": false,
+        "altKey": false
+      },
+      "pasteUnits": {
+        "label": "Paste units",
+        "code": "KeyV",
+        "ctrlKey": true,
+        "shiftKey": false,
+        "altKey": false
+      },
+      "hotgroup1only": {
+        "label": "Hotgroup 1 (Select only)",
+        "code": "Digit1",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup1add": {
+        "label": "Hotgroup 1 (Add to)",
+        "code": "Digit1",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup1set": {
+        "label": "Hotgroup 1 (Set)",
+        "code": "Digit1",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup1also": {
+        "label": "Hotgroup 1 (Select also)",
+        "code": "Digit1",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup2only": {
+        "label": "Hotgroup 2 (Select only)",
+        "code": "Digit2",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup2add": {
+        "label": "Hotgroup 2 (Add to)",
+        "code": "Digit2",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup2set": {
+        "label": "Hotgroup 2 (Set)",
+        "code": "Digit2",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup2also": {
+        "label": "Hotgroup 2 (Select also)",
+        "code": "Digit2",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup3only": {
+        "label": "Hotgroup 3 (Select only)",
+        "code": "Digit3",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup3add": {
+        "label": "Hotgroup 3 (Add to)",
+        "code": "Digit3",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup3set": {
+        "label": "Hotgroup 3 (Set)",
+        "code": "Digit3",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup3also": {
+        "label": "Hotgroup 3 (Select also)",
+        "code": "Digit3",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup4only": {
+        "label": "Hotgroup 4 (Select only)",
+        "code": "Digit4",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup4add": {
+        "label": "Hotgroup 4 (Add to)",
+        "code": "Digit4",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup4set": {
+        "label": "Hotgroup 4 (Set)",
+        "code": "Digit4",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup4also": {
+        "label": "Hotgroup 4 (Select also)",
+        "code": "Digit4",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup5only": {
+        "label": "Hotgroup 5 (Select only)",
+        "code": "Digit5",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup5add": {
+        "label": "Hotgroup 5 (Add to)",
+        "code": "Digit5",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup5set": {
+        "label": "Hotgroup 5 (Set)",
+        "code": "Digit5",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup5also": {
+        "label": "Hotgroup 5 (Select also)",
+        "code": "Digit5",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup6only": {
+        "label": "Hotgroup 6 (Select only)",
+        "code": "Digit6",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup6add": {
+        "label": "Hotgroup 6 (Add to)",
+        "code": "Digit6",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup6set": {
+        "label": "Hotgroup 6 (Set)",
+        "code": "Digit6",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup6also": {
+        "label": "Hotgroup 6 (Select also)",
+        "code": "Digit6",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup7only": {
+        "label": "Hotgroup 7 (Select only)",
+        "code": "Digit7",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup7add": {
+        "label": "Hotgroup 7 (Add to)",
+        "code": "Digit7",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup7set": {
+        "label": "Hotgroup 7 (Set)",
+        "code": "Digit7",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup7also": {
+        "label": "Hotgroup 7 (Select also)",
+        "code": "Digit7",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup8only": {
+        "label": "Hotgroup 8 (Select only)",
+        "code": "Digit8",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup8add": {
+        "label": "Hotgroup 8 (Add to)",
+        "code": "Digit8",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup8set": {
+        "label": "Hotgroup 8 (Set)",
+        "code": "Digit8",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup8also": {
+        "label": "Hotgroup 8 (Select also)",
+        "code": "Digit8",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "hotgroup9only": {
+        "label": "Hotgroup 9 (Select only)",
+        "code": "Digit9",
+        "shiftKey": false,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup9add": {
+        "label": "Hotgroup 9 (Add to)",
+        "code": "Digit9",
+        "shiftKey": true,
+        "altKey": false,
+        "ctrlKey": false
+      },
+      "hotgroup9set": {
+        "label": "Hotgroup 9 (Set)",
+        "code": "Digit9",
+        "ctrlKey": true,
+        "altKey": false,
+        "shiftKey": false
+      },
+      "hotgroup9also": {
+        "label": "Hotgroup 9 (Select also)",
+        "code": "Digit9",
+        "ctrlKey": true,
+        "shiftKey": true,
+        "altKey": false
+      },
+      "PTT0Active": {
+        "label": "PTT 0 active",
+        "code": "KeyZ",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT1Active": {
+        "label": "PTT 1 active",
+        "code": "KeyX",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT2Active": {
+        "label": "PTT 2 active",
+        "code": "KeyC",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT3Active": {
+        "label": "PTT 3 active",
+        "code": "KeyV",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT4Active": {
+        "label": "PTT 4 active",
+        "code": "KeyB",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT5Active": {
+        "label": "PTT 5 active",
+        "code": "KeyN",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT6Active": {
+        "label": "PTT 6 active",
+        "code": "KeyM",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT7Active": {
+        "label": "PTT 7 active",
+        "code": "Comma",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "PTT8Active": {
+        "label": "PTT 8 active",
+        "code": "Dot",
+        "shiftKey": true,
+        "ctrlKey": false,
+        "altKey": false
+      },
+      "idle": {
+        "label": "Deselect all",
+        "code": "Escape"
+      }
+    },
+    "audioOptions": {
+      "input": "",
+      "output": ""
+    }
+  }
+}
