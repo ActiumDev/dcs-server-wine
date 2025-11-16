@@ -1,0 +1,36 @@
+[Unit]
+Description=Webserver for VNC and DCS WebGUI
+Documentation=man:lighttpd https://wiki.lighttpd.net
+
+[Service]
+Environment=HTTPD_PORT=%i
+
+Type=simple
+ExecStartPre=/usr/bin/mkdir -p %t/lighttpd
+ExecStartPre=/usr/sbin/lighttpd -tt -f %h/.config/lighttpd/lighttpd.conf
+ExecStart=/usr/sbin/lighttpd -D -f %h/.config/lighttpd/lighttpd.conf
+ExecReload=/usr/sbin/lighttpd -tt -f %h/.config/lighttpd/lighttpd.conf
+ExecReload=/bin/kill -USR1 $MAINPID
+Restart=on-failure
+
+# copied from /usr/lib/systemd/system/lighttpd.service
+KeyringMode=private
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+NoNewPrivileges=yes
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectClock=yes
+ProtectControlGroups=yes
+ProtectHome=read-only
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+ProtectProc=invisible
+ProtectSystem=full
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+SystemCallArchitectures=native

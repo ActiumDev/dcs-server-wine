@@ -10,7 +10,7 @@ WantedBy=default.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/wayvnc 127.0.0.1 %i
+ExecStart=/usr/bin/wayvnc --disable-resizing --websocket 127.0.0.1 %i
 
 Restart=always
 RestartSec=1

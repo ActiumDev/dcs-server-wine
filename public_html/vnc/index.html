@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!--
+Minimal noVNC client derived from:
+https://github.com/novnc/noVNC/blob/master/vnc_lite.html
+
+Copyright (c) 2019 The noVNC authors
+Copyright (c) 2025 Actium <ActiumDev@users.noreply.github.com>
+SPDX-License-Identifier: BSD-2-Clause
+-->
+<html lang="en">
+<head>
+    <title>noVNC</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: dimgrey;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        #top_bar {
+            background-color: #6e84a3;
+            color: white;
+            font: bold 12px Helvetica;
+            padding: 6px 5px 4px 5px;
+            border-bottom: 1px outset;
+        }
+        #status {
+            text-align: center;
+        }
+
+        #screen {
+            flex: 1; /* fill remaining space */
+            overflow: hidden;
+        }
+    </style>
+    <script type="module" crossorigin="anonymous">
+        // RFB holds the API to connect and communicate with a VNC server
+        import RFB from './core/rfb.js';
+
+        let rfb;
+        let desktopName;
+
+        // When this function is called we have
+        // successfully connected to a server
+        function connectedToServer(e) {
+            status("Connected to " + desktopName);
+        }
+
+        // This function is called when we are disconnected
+        function disconnectedFromServer(e) {
+            // TODO: implement delayed reconnect
+            if (e.detail.clean) {
+                status("Disconnected");
+            } else {
+                status("Something went wrong, connection is closed");
+            }
+        }
+
+        // When this function is called we have received
+        // a desktop name from the server
+        function updateDesktopName(e) {
+            desktopName = e.detail.name;
+        }
+
+        // Show a status text in the top bar
+        function status(text) {
+            document.getElementById('status').textContent = text;
+        }
+
+        status("Connecting");
+
+        // Build the websocket URL used to connect
+        let url = (window.location.protocol === "https:" ? "wss://" : "ws://")
+                + window.location.host + "/vnc/websocket";
+
+        // Creating a new RFB object will start a new connection
+        rfb = new RFB(document.getElementById('screen'), url);
+
+        // Add listeners to important events from the RFB module
+        rfb.addEventListener("connect",  connectedToServer);
+        rfb.addEventListener("disconnect", disconnectedFromServer);
+        rfb.addEventListener("desktopname", updateDesktopName);
+        rfb.viewOnly = false;
+        rfb.scaleViewport = false;
+    </script>
+</head>
+<body>
+    <div id="top_bar">
+        <div id="status">Loading</div>
+    </div>
+    <div id="screen">
+        <!-- This is where the remote screen will appear -->
+    </div>
+</body>
+</html>

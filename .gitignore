@@ -5,9 +5,11 @@
 .cache
 .gitconfig
 .lesshst
-.local
+.local/share/*
+!.local/share/novnc/
 .net
 .profile
+.python_history
 .ssh
 .wget-hsts
 
