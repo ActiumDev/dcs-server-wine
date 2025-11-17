@@ -36,10 +36,6 @@ Type=simple
 WorkingDirectory=%h/.wine/drive_c/DCS_server
 Environment=DCS_LOCK_FILE="%h/.wine/drive_c/DCS_configs/DCS.%i/dcs.lock"
 
-# configure per-instance directory for Tacview .acmi files
-# TODO: replace with relative tacviewExportPath support (available since 1.9.5 beta 15)
-ExecStartPre=/usr/bin/sed -i "s/\"C:\\\\\\\\DCS_configs\\\\\\\\Tacview\",/\"C:\\\\\\\\DCS_configs\\\\\\\\DCS.%i\\\\\\\\Tacview\",/" "%h/.wine/drive_c/DCS_configs/DCS.%i/Config/options.lua"
-
 ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_server.exe -w DCS.%i
 Restart=always
 RestartSec=15
