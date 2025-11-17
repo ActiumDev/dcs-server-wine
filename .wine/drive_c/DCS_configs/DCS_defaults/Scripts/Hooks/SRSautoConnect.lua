@@ -37,6 +37,7 @@ if DCS.isServer() then
                 srsauto.port = tonumber(port)
             end
         end
+        _fh:close()
     end
 
     -- register callback
