@@ -6,7 +6,6 @@ Documentation=man:lighttpd https://wiki.lighttpd.net
 Environment=HTTPD_PORT=%i
 
 Type=simple
-ExecStartPre=/usr/bin/mkdir -p %t/lighttpd
 ExecStartPre=/usr/sbin/lighttpd -tt -f %h/.config/lighttpd/lighttpd.conf
 ExecStart=/usr/sbin/lighttpd -D -f %h/.config/lighttpd/lighttpd.conf
 ExecReload=/usr/sbin/lighttpd -tt -f %h/.config/lighttpd/lighttpd.conf
