@@ -56,11 +56,12 @@ for path_writedir in path_configs.glob("DCS.*"):
 # assemble Lighttpd configuration
 cfg = []
 
-# aliases for WebGUI files
-cfg.append("# aliases for WebGUI files")
+# aliases for WebGUI and Tacview files
+cfg.append("# aliases for WebGUI and Tacview files")
 cfg.append("alias.url += (")
 for name, config in servers.items():
 	cfg.append(f'\t"/{name}/WebGUI/" => env.HOME + "/.wine/drive_c/DCS_server/WebGUI/",')
+	cfg.append(f'\t"/{name}/Tacview/" => env.HOME + "/.wine/drive_c/DCS_configs/{name}/Tacview/",')
 cfg.append(")\n")
 
 # WebGUI reverse proxy
