@@ -30,7 +30,8 @@ RestartSec=1
 # dynamically link Olympus into server writedir when starting the frontend to
 # prevent the backend from running without the frontend.
 # NOTE: this service must be started before the related dcs-server@.service
-ExecStartPre=/usr/bin/ln -s ../../../../Olympus/Mods/Services/Olympus %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Services/Olympus
-ExecStartPre=/usr/bin/ln -s ../../../../Olympus/Scripts/Hooks/OlympusHook.lua %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/Hooks/OlympusHook.lua
-ExecStopPost=/usr/bin/rm %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Services/Olympus
-ExecStopPost=/usr/bin/rm %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/Hooks/OlympusHook.lua
+ExecStartPre=/usr/bin/mkdir -p %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Services/ %h/.wine/drive_c/DCS_configs/DCS.%i/Tacview/Scripts/Hooks/
+ExecStartPre=/usr/bin/ln -frsn %h/.wine/drive_c/Olympus/Mods/Services/Olympus %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Services/
+ExecStartPre=/usr/bin/ln -frsn %h/.wine/drive_c/Olympus/Scripts/Hooks/OlympusHook.lua %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/Hooks/
+ExecStopPost=/usr/bin/rm -f %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Services/Olympus
+ExecStopPost=/usr/bin/rm -f %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/Hooks/OlympusHook.lua
