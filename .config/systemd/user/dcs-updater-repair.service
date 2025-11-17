@@ -1,5 +1,5 @@
 [Unit]
-Description=DCS Updater
+Description=DCS Updater (Repair)
 Documentation=https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/
 Documentation=https://forum.dcs.world/topic/94816-guide-info-dcs-updater-usage-version-numbers-module-ids/
 
@@ -13,12 +13,12 @@ After=wineserver.service
 Requires=wineserver.service
 
 # do not run other updater services simultaneously
-Conflicts=dcs-updater-repair.service
+Conflicts=dcs-updater.service
 
 [Service]
 Type=oneshot
 WorkingDirectory=%h/.wine/drive_c/DCS_server
-ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_updater.exe update
+ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_updater.exe repair
 ExecStartPost=%h/patches/00_apply_all.sh
 
 # (re)start all enabled dcs-server@* instances after updater exited

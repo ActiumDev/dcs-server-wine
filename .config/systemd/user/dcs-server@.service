@@ -13,8 +13,10 @@ Requires=wineserver.service
 
 # do not start updater before server has terminated
 After=dcs-updater.service
+After=dcs-updater-repair.service
 # server(s) and updater must not run simultaneously
 Conflicts=dcs-updater.service
+Conflicts=dcs-updater-repair.service
 
 # start dcs-watchdog when starting the dcs-server
 Requires=dcs-watchdog@%i.service
