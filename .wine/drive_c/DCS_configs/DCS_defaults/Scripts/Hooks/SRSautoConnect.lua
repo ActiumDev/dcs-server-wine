@@ -19,9 +19,8 @@ srsauto.port = nil
 local _name = debug.getinfo(1, "S").source:match("[^\\]+%.lua$") or "SRSautoConnect.lua"
 
 -- send auto connect message when player connects or changes slot
-local _host_player_id = net.get_server_id and net.get_server_id() or 1
 function srsauto.onPlayerConnect(id)
-    if type(srsauto.port) == "number" and id ~= _host_player_id then
+    if type(srsauto.port) == "number" and id ~= net.get_server_id() then
         net.send_chat_to(string.format("SRS Running on %d", srsauto.port), id)
     end
 end
