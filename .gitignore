@@ -13,6 +13,8 @@
 .ssh
 .wget-hsts
 
+.config/lighttpd/*.crt
+.config/lighttpd/*.pem
 .config/systemd/user/*.target.wants
 
 .wine/*.*

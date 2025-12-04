@@ -45,7 +45,6 @@ for path_writedir in path_configs.glob("DCS.*"):
 		olympus_port = int(olympus_json["frontend"]["port"])
 	except (FileNotFoundError, KeyError):
 		olympus_port = None
-		pass
 
 	servers[path_writedir.name] = {
 		"webgui_port": webgui_port,
@@ -63,6 +62,15 @@ for name, config in servers.items():
 	cfg.append(f'\t"/{name}/WebGUI/" => env.HOME + "/.wine/drive_c/DCS_server/WebGUI/",')
 	cfg.append(f'\t"/{name}/Tacview/" => env.HOME + "/.wine/drive_c/DCS_configs/{name}/Tacview/",')
 cfg.append(")\n")
+
+# dirlisting for Tacview
+cfg.append("# Tacview directory listing")
+for name, config in servers.items():
+	cfg.append(
+		f'$HTTP["url"] =^ "/{name}/Tacview/" {{\n'
+		f'\tdir-listing.activate = "enable"\n}}'
+	)
+cfg.append("")
 
 # WebGUI reverse proxy
 cfg.append("# WebGUI reverse proxy")
@@ -86,9 +94,8 @@ for name, config in servers.items():
 		cfg.append(f"# {name} missing (valid) webconsole_port")
 		continue
 
-	name_re = re.escape(name)
 	cfg.append(
-		f'$HTTP["url"] =~ "^/{name_re}/WebConsole/" {{\n'
+		f'$HTTP["url"] =^ "/{name}/WebConsole/" {{\n'
 		f'\tproxy.server = ( "" => (( "host" => "127.0.0.1", "port" => "{config["webconsole_port"]}" )))\n'
 		f'\tproxy.header = ( "map-urlpath" => ( "/{name}/WebConsole/" => "/" ))\n}}'
 	)
@@ -101,9 +108,8 @@ for name, config in servers.items():
 		cfg.append(f"# {name} missing (valid) Olympus frontend port")
 		continue
 
-	name_re = re.escape(name)
 	cfg.append(
-		f'$HTTP["url"] =~ "^/{name_re}/Olympus/" {{\n'
+		f'$HTTP["url"] =^ "/{name}/Olympus/" {{\n'
 		f'\tproxy.server = ( "" => (( "host" => "127.0.0.1", "port" => "{config["olympus_port"]}" )))\n'
 		f'\tproxy.header = ( "map-urlpath" => ( "/{name}/Olympus/" => "/" ))\n}}'
 	)

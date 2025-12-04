@@ -14,13 +14,15 @@ on a single headless Linux server.
   * Ships with [useful helper scripts](./.wine/drive_c/DCS_configs/DCS_defaults/Scripts/Hooks/)
 * Minimal overhead: ~200M RAM on Debian 13.0 (kernel + user-space)
   * Built for headless (non-GUI) Linux servers:
-    Does not require a desktop environment (e.g., Gnome, KDE, XFCE, ...)
-  * DCS window accessible via VNC
+    No desktop environment required (e.g., Gnome, KDE, XFCE, ...)
   * Runs Caucasus and Marianas on servers with 8G RAM (more for other terrains)
 * Convenient management of all server processes through systemd user services
-  (`systemctl --user start|stop|status dcs-server|srs-server`) and automatic
-  restart of failed services (including detection and forced restart of frozen
-  servers with an unresponsive WebGUI).
+  (`systemctl --user start|stop|status (dcs-server|srs-server)@serverN`) and
+  automatic restart of failed services (including detection and forced restart
+  of frozen servers with an unresponsive WebGUI).
+* Auto-configured webserver for hassle-free access to DCS windows for
+  authentication and updating via [noVNC](https://github.com/novnc/noVNC).
+  Also provides direct access to the DCS WebGUI of each server.
 * Supports multiple DCS server instances (`DCS_server.exe -w DCS.*`) through
   systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description)
 
@@ -48,7 +50,7 @@ Do not attempt the installation if you lack the required fundamentals!
 * Network: 1 Gbps link in a datacenter. At least 100 Mbps at home.
 
 Dedicated server module names and respective installed and download sizes as of
-DCS 2.9.20.15010. Note that to install a module, you will temporarily need free
+DCS 2.9.21.16552. Note that to install a module, you will temporarily need free
 disk space for the sum of both sizes as `DCS_updater.exe` will first download
 all files and then unpack the module.
 
@@ -59,11 +61,11 @@ all files and then unpack the module.
 | `FALKLANDS_terrain`          |           37.7 |          10.8 |
 | `GERMANYCW_terrain`          |           73.9 |          24.7 |
 | `IRAQ_terrain`               |           69.3 |          22.8 |
-| `KOLA_terrain`               |           66.2 |          18.9 |
+| `KOLA_terrain`               |           66.7 |          19.1 |
 | `MARIANAISLANDSWWII_terrain` |            6.4 |           2.2 |
 | `MARIANAISLANDS_terrain`     |            9.8 |           2.8 |
 | `NEVADA_terrain`             |            7.1 |           2.3 |
-| `NORMANDY_terrain`           |           33.5 |          11.3 |
+| `NORMANDY_terrain`           |           38.4 |          12.7 |
 | `PERSIANGULF_terrain`        |           22.7 |           7.9 |
 | `SINAIMAP_terrain`           |           45.3 |          15.5 |
 | `SUPERCARRIER`               |            0.2 |           0.1 |
@@ -71,7 +73,7 @@ all files and then unpack the module.
 | `THECHANNEL_terrain`         |           18.0 |           6.6 |
 | `WORLD`                      |           18.3 |           9.8 |
 | `WWII-ARMOUR`                |            1.1 |           0.5 |
-| **Σ**                        |      **517.8** |     **173.5** |
+| **Σ**                        |      **523.2** |     **175.1** |
 
 ### Operating System
 
@@ -101,13 +103,9 @@ are suggestions; any program implementing the respective protocol should work):
 * SSH client: Recent versions of Windows 10/11 include a
   [built-in SSH client](https://learn.microsoft.com/en-us/windows/terminal/tutorials/ssh).
   Use it. Do not install PuTTY or other 3rd-party SSH clients.
-* VNC client: [UltraVNC](https://github.com/ultravnc/UltraVNC/)
 * SFTP client: Required to transfer files (e.g., missions). Windows includes
   [scp](https://learn.microsoft.com/en-us/azure/virtual-machines/copy-files-to-vm-using-scp)
-  as a command line client. Alternatively, install a GUI client like
-  [FileZilla](https://filezilla-project.org/download.php?show_all=1)
-  (do not download the version with "bundled offers", verify the filename does
-  not include "sponsored"!).
+  as a command line client.
 
 ### Linux Server Prerequisites (root/sudo privileges required)
 
@@ -118,7 +116,8 @@ Run via `ssh root@server`:
 # TODO: adjust this if your server does not run Debian
 sudo dpkg --add-architecture i386 && sudo apt update
 sudo apt install --no-install-recommends \
-	curl git wine wine32:i386 wine64 python3-minimal sway unzip wayvnc
+	curl git git-lfs lighttpd python3-minimal sway unzip wayvnc wine wine32:i386 wine64
+sudo systemctl disable --now lighttpd
 # Create a separate user account for the DCS server and enable persistent
 # systemd user services for it (exemplary user name, change at will)
 sudo useradd -m -s /bin/bash -G render,video dcs
@@ -127,7 +126,7 @@ sudo loginctl enable-linger dcs
 
 ### Installation
 
-Run via `ssh dcs@server`: 
+Run via `ssh -L 8080:127.0.0.1:8080 dcs@server` (see below for meaning of `-L`):
 
 ```sh
 # use Git to download all scripts and config files into the home directory
@@ -135,19 +134,19 @@ cd ~
 git init -b main ~
 git remote add origin https://github.com/ActiumDev/dcs-server-wine.git
 git pull origin main
-# start basic services: minimal GUI, VNC server
+git submodule update --init --recursive
+# start basic services: minimal GUI, VNC server, webserver
 # TODO: replace 5900 with your desired, locally bound VNC port
+# TODO: replace 8080 with your desired, locally bound HTTP port
 systemctl --user daemon-reload
-systemctl --user enable --now sway wayvnc@5900
+systemctl --user enable --now sway wayvnc@5900 webserver@8080
 ```
 
-The DCS user account should now be running the minimal GUI, which is accessible
-via a VNC server bound to localhost (not accessible remotely). Close the open
-SSH session and reconnect via `ssh -L 5900:127.0.0.1:5900 dcs@server` to set
-up static port forwarding from your local machine that you run `ssh` on to the
-`dcs@server`. This enables securely authenticated and encrypted VNC access.
-You can now open `127.0.0.1:5900` via your local VNC client and should see an
-empty desktop.
+`dcs@server` now runs the minimal, headless GUI, a VNC server, and a webserver
+that provides straightforward VNC and DCS WebGUI access. The connection is
+securely authenticated and encrypted via SSH static port forwarding (`-L`).
+Open <http://127.0.0.1:8080/vnc/> in a webbrowser to access the VNC server that
+should now show an empty desktop with a clock in the top right corner.
 
 Everything is ready for the actual installation. First, decide which terrains
 to install from above module table or [this list](https://forum.dcs.world/topic/324040-eagle-dynamics-modular-dedicated-server-installer/).
@@ -174,20 +173,16 @@ and check both "Save password" and "Auto login" options to enable the DCS
 server to start non-interactively in the future.
 
 The VNC session should now show the DCS splash screen. The SRS server should
-run as a windowless background service. The DCS server should now be listening
-on port 10308 (default) and SRS on port 5002 (default).
-The server is unlisted (not public) by default.
+run as a windowless background service. The DCS server defaults to port 10308
+and SRS defaults to port 5002. The server is unlisted (not public) by default.
 
 You can connect to the server by IP address and port. The default mission will
 start automatically once the first player connects.
 
 ### Access to DCS WebGUI
 
-Just like the VNC port, forward the DCS WebGUI port (see `autoexec.cfg`) via
-SSH: `ssh -L 5900:127.0.0.1:5900 -L 8088:127.0.0.1:8088 dcs@server`.
-Then, use a local browser to open `WebGUI/index.html` from your local DCS
-client(!) installation directory. The WebGUI should detect the server
-automatically.
+The webserver also provides remote access to the DCS WebGUI. Simply open
+<http://127.0.0.1:8080/DCS.server1/WebGUI/index.html> in your browser.
 
 ### Optional: Configuration
 
