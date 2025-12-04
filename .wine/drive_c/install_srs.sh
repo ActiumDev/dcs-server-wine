@@ -1,7 +1,7 @@
 #!/bin/sh -eux
 
 # SRS download link (most recent release known to work)
-SRS_URL="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/download/2.3.2.2/SRS-Server-Commandline"
+SRS_URL="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/download/2.3.3.3/SRS-Server-Commandline-Linux"
 
 # extract version string from $SRS_URL
 SRS_DLVER=${SRS_URL%/*}
