@@ -23,7 +23,5 @@
 .wine/drive_c/Olympus
 .wine/drive_c/Program*
 .wine/drive_c/SRS_server
-.wine/drive_c/Tacview/*
-!.wine/drive_c/Tacview/README.md
 .wine/drive_c/users
 .wine/drive_c/windows

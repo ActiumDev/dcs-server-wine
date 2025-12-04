@@ -3,3 +3,4 @@
 *.service	text eol=lf
 *.sh		text eol=lf
 *.txt		text eol=lf
+.wine/drive_c/Tacview/Mods/Tech/Tacview/bin/tacview.dll filter=lfs diff=lfs merge=lfs -text

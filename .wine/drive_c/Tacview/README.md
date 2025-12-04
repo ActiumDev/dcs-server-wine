@@ -1,7 +1,27 @@
-# Tacview DCS Mod Directory
+# Tacview DCS2ACMI Plugin for DCS World
 
-Upload the Tacview DCS mod into this directory, e.g., via a PowerShell terminal:
-`scp -r "C:\Program Files (x86)\Tacview\DCS\*" user@server:.wine/drive_c/Tacview/`
+Tacview ACMI - Universal Flight Analysis Tool 1.9.5
+Flight Data Recorder for DCS World Export LUA Environment
+Copyright (C) 2006-2025 - Raia Software Inc.
+All rights reserved.
 
-Then, enable Tacview on the server via:
-`systemctl --user enable --now tacview@server1`
+This redistribution is authorized by Raia Software Inc. to facilitate setting up
+server-side Tacview ACMI export for DCS World dedicated servers. All other uses
+require prior, written authorization by Raia Software Inc.
+
+All modifications made to any Tacview files must be documented in this README
+document along with a reason for the modification.
+Currently, no such modifications have been made.
+
+
+## Installation and Configuration
+
+Server-side Tacview may have a minor performance impact on the dedicated server
+performance, so it is not enabled by default.
+
+You can enable Tacview on a per-instance basis *before* starting the respective
+server instance as follows (example for instance/writedir `DCS.serverN`):
+`systemctl --user enable --now tacview@serverN`
+
+Similarly, disable Tacview as follows:
+`systemctl --user disable --now tacview@serverN`

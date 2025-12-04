@@ -18,8 +18,8 @@ RemainAfterExit=yes
 # dynamically link Tacview into the server writedir so it can be trivially
 # enabled and disabled
 # NOTE: this service must be started before the related dcs-server@.service
-ExecStartPre=/usr/bin/mkdir -p %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Tech/ %h/.wine/drive_c/DCS_configs/DCS.%i/Tacview/Scripts/Hooks/
-ExecStart=/usr/bin/ln -frsn %h/.wine/drive_c/Tacview/Mods/tech/Tacview %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Tech/
+ExecStartPre=/usr/bin/mkdir -p %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Tech/ %h/.wine/drive_c/DCS_configs/DCS.%i/Tacview/
+ExecStart=/usr/bin/ln -frsn %h/.wine/drive_c/Tacview/Mods/Tech/Tacview %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Tech/
 ExecStart=/usr/bin/ln -frsn %h/.wine/drive_c/Tacview/Scripts/TacviewGameExport.lua %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/
 ExecStart=/usr/bin/ln -frsn %h/.wine/drive_c/Tacview/Scripts/Hooks/TacviewGameGUI.lua %h/.wine/drive_c/DCS_configs/DCS.%i/Scripts/Hooks/
 ExecStop=/usr/bin/rm -f %h/.wine/drive_c/DCS_configs/DCS.%i/Mods/Tech/Tacview
