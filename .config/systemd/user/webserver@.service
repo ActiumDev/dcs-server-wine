@@ -2,6 +2,9 @@
 Description=Webserver for VNC and DCS WebGUI
 Documentation=man:lighttpd https://wiki.lighttpd.net
 
+[Install]
+WantedBy=default.target
+
 [Service]
 Environment=HTTPD_PORT=%i
 
