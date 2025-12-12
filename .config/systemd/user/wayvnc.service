@@ -1,0 +1,20 @@
+[Unit]
+Description=VNC Server
+Documentation=man:wayvnc(1)
+
+After=sway.service
+BindsTo=sway.service
+
+[Install]
+WantedBy=default.target
+
+[Service]
+# set default ports (can be overriden in ~/ENVIRONMENT.txt)
+Environment=VNC_PORT=5900
+EnvironmentFile=-%h/ENVIRONMENT.txt
+
+Type=simple
+ExecStart=/usr/bin/wayvnc --disable-resizing --websocket 127.0.0.1 $VNC_PORT
+
+Restart=always
+RestartSec=1

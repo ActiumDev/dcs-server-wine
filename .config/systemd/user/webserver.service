@@ -6,7 +6,11 @@ Documentation=man:lighttpd https://wiki.lighttpd.net
 WantedBy=default.target
 
 [Service]
-Environment=HTTPD_PORT=%i
+# set default ports (can be overriden in ~/ENVIRONMENT.txt)
+Environment=HTTP_PORT=8080
+Environment=HTTPS_PORT=8443
+Environment=VNC_PORT=5900
+EnvironmentFile=-%h/ENVIRONMENT.txt
 
 Type=simple
 ExecStartPre=/usr/sbin/lighttpd -tt -f %h/.config/lighttpd/lighttpd.conf

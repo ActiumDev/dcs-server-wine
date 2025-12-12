@@ -7,25 +7,38 @@ on a single headless Linux server.
 
 ## Features
 
-* Fully automatic installation and upgrades of DCS and SRS
-* Plug & Play: DCS and SRS are usable immediately after installation
-  * Pre-configured with [reasonable defaults](./.wine/drive_c/DCS_configs/DCS_defaults/Config/)
-  * Auto-starts a default mission (Caucasus with dynamic spawns)
-  * Ships with [useful helper scripts](./.wine/drive_c/DCS_configs/DCS_defaults/Scripts/Hooks/)
-* Minimal overhead: ~200M RAM on Debian 13.0 (kernel + user-space)
-  * Built for headless (non-GUI) Linux servers:
-    No desktop environment required (e.g., Gnome, KDE, XFCE, ...)
+* Ready for takeoff: Zero configuration required. Runs out of the box.
+  * Pre-configured with [reasonable defaults](./.wine/drive_c/DCS_configs/DCS_defaults/Config/).
+    Auto-starts a default mission (Caucasus with dynamic spawns).
+  * Server-side Tacview with per-instance `*.acmi` file directory. Optional.
+    Enable with: `systemctl --user enable --now tacview@serverN`
+  * Continuous performance monitoring: [`FPSmon.lua`](./.wine/drive_c/DCS_configs/DCS_defaults/Config/Scripts/Hooks/FPSmon.lua)
+    warns clients about low server simulation frame rate or frame time spikes.
+  * [Mitigates security vulnerabilities](./patches/01_MissionScripting.lua.patch)
+    and [defuses footguns](.wine/drive_c/DCS_configs/DCS_defaults/Scripts/Hooks/NoErrPopup.lua)
+    that lack fixes from upstream developers.
+* Minimal overhead: ~250M RAM on Debian 13.0 (kernel + user-space)
+  * Built for headless (non-GUI) Linux servers without desktop environment.
   * Runs Caucasus and Marianas on servers with 8G RAM (more for other terrains)
-* Convenient management of all server processes through systemd user services
-  (`systemctl --user start|stop|status (dcs-server|srs-server)@serverN`) and
-  automatic restart of failed services (including detection and forced restart
-  of frozen servers with an unresponsive WebGUI).
-* Auto-configured webserver for hassle-free access to DCS windows for
-  authentication and updating via [noVNC](https://github.com/novnc/noVNC).
-  Also provides direct access to the DCS WebGUI of each server.
-* Supports multiple DCS server instances (`DCS_server.exe -w DCS.*`) through
+* Convenient management of all server processes through systemd user services:
+  `systemctl --user start|stop|status (dcs-server|srs-server)@serverN`
+* Automatic restart of crashed or stalled services (including detection and
+  forced restart of frozen DCS server with an unresponsive WebGUI).
+* Supports multiple server instances (`DCS_server.exe -w DCS.*`) through
   systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description)
+* Auto-configured webserver for hassle-free, browser-based VNC, WebGUI
+  and file access (work in progress).
 
+### Planned Features
+
+* Olympus support: Currently blocked by #9. Help welcome.
+* Performance parity with Windows: [Requires ntsync support](https://forum.dcs.world/topic/369832-automated-installation-of-dedicated-dcs-server-w-srs-on-linux/#findComment-5710848).
+  Work in progress (expected with Wine Stable 11.0 in Q1/26, but breaks
+  DCS_updater.exe, see #8).
+* Encrypted and password-protected access to DCS WebGUI via webserver to
+  delegate server-administration without providing SSH access.
+* [WebDAV](https://en.wikipedia.org/wiki/WebDAV) access to [`DCS_configs`](./.wine/drive_c/DCS_configs/)
+  folder to facilitate remote file access via Windows' *Map network drive*.
 
 ## Requirements
 
@@ -80,8 +93,6 @@ all files and then unpack the module.
 This has been developed and tested on a Debian 13 "Trixie" server install.
 Most Linux distributions that use systemd should work as well, but changes to
 accomodate the respective package manager, package names, etc. may be required.
-You should enable [automatic updates](https://wiki.debian.org/UnattendedUpgrades)
-to keep your server secure.
 
 
 ## Usage Instructions
@@ -136,10 +147,9 @@ git remote add origin https://github.com/ActiumDev/dcs-server-wine.git
 git pull origin main
 git submodule update --init --recursive
 # start basic services: minimal GUI, VNC server, webserver
-# TODO: replace 5900 with your desired, locally bound VNC port
-# TODO: replace 8080 with your desired, locally bound HTTP port
+# TODO: create ~/ENVIRONMENT.txt to change VNC and webserver ports
 systemctl --user daemon-reload
-systemctl --user enable --now sway wayvnc@5900 webserver@8080
+systemctl --user enable --now sway wayvnc webserver
 ```
 
 `dcs@server` now runs the minimal, headless GUI, a VNC server, and a webserver
@@ -165,7 +175,7 @@ export DCS_TERRAINS="CAUCASUS_terrain"
 ~/.wine/drive_c/install_srs.sh
 ```
 
-Via VNC: Watch the DCS Updater progress through the installation and confirm
+Via VNC: Watch the DCS updater progress through the installation and confirm
 the final success message. The DCS server will start automatically. When shown
 the "DCS Login" window, enter your credentials (best practice: use separate
 server account with [purchases restricted](https://forum.dcs.world/topic/338207-restrict-purchases-on-server-account-option/#comment-5347613))
@@ -182,19 +192,55 @@ start automatically once the first player connects.
 ### Access to DCS WebGUI
 
 The webserver also provides remote access to the DCS WebGUI. Simply open
-<http://127.0.0.1:8080/DCS.server1/WebGUI/index.html> in your browser.
+<http://127.0.0.1:8080/DCS.server1/WebGUI/> in your browser.
 
-### Optional: Configuration
+### Optional: Configuration and Tacview
 
 Modify `~/.wine/drive_c/DCS_configs/DCS.server1/Config/autoexec.cfg` to suit
 your requirements. Additionally, use the WebGUI to conveniently configure the
-server settings. Then restart the server for all changes to take effect:
+server settings.
+
+Tacview's DCS2ACMI plugin is [redistributed with this git repo](./.wine/drive_c/Tacview/).
+However, server-side Tacview `*.acmi` file generation may have a minor impact
+on the dedicated server performance, so it is disabled by default.
+
+You can enable Tacview on a per-instance basis *before* starting the respective
+server instance as follows (example for instance/writedir `DCS.serverN`):
+`systemctl --user enable --now tacview@serverN`
+
+Finally, restart the server for all changes to take effect:
 ```sh
 systemctl --user restart dcs-server@server1
 ```
 
+### Optional: Additional Server Instances
 
-## Troubleshooting
+Multiple server instances are supported via systemd unit instances. By default,
+only the instance `server1`, which corresponding to the DCS *writedir* named
+`DCS.server1` is configured. Before additional instances can be started via
+above `systemctl --user ...` commands, the respective configuration directories
+must be created.
+
+First, copy the configuration template `DCS_defaults` to a new instance directory:
+```sh
+cp -a ~/.wine/drive_c/DCS_configs/DCS_defaults/ ~/.wine/drive_c/DCS_configs/DCS.serverN/
+```
+
+Then, manually edit the following config files to set unique ports:
+* `["port"]` in `Config/serverSettings.lua`
+* `webgui_port` in `Config/autoexec.cfg`
+* `SERVER_PORT` in `SRS/server.cfg`
+
+Finally, reload the webserver and enable the services for the new instance:
+```sh
+systemctl --user reload webserver
+systemctl --user enable --now tacview@serverN
+systemctl --user enable --now srs-server@serverN
+systemctl --user enable --now dcs-server@serverN
+```
+
+
+## Known Issues and Troubleshooting
 
 ### Installation fails with `wine: could not load kernel32.dll, status c0000135`
 

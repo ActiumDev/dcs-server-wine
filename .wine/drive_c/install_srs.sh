@@ -17,9 +17,6 @@ if [ "$SRS_VER" != "$SRS_DLVER" ] ; then
 	echo $SRS_DLVER >$SRS_DIR/version.txt
 fi
 
-# delete obsolete Windows GUI binary
-rm -f "$SRS_DIR/SR-Server.exe"
-
 # enable and start SRS server
 systemctl --user enable --now srs-server@server1
 # verify it started successfully (may take a few seconds to fail)

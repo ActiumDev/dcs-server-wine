@@ -12,16 +12,3 @@ require prior, written authorization by Raia Software Inc.
 All modifications made to any Tacview files must be documented in this README
 document along with a reason for the modification.
 Currently, no such modifications have been made.
-
-
-## Installation and Configuration
-
-Server-side Tacview may have a minor performance impact on the dedicated server
-performance, so it is not enabled by default.
-
-You can enable Tacview on a per-instance basis *before* starting the respective
-server instance as follows (example for instance/writedir `DCS.serverN`):
-`systemctl --user enable --now tacview@serverN`
-
-Similarly, disable Tacview as follows:
-`systemctl --user disable --now tacview@serverN`
