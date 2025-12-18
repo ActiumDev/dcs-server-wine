@@ -24,7 +24,7 @@ path_vault = path_wdir / "Config" / "network.vault"
 
 # try to parse webgui_port from autoexec.cfg, fall back to 8088
 try:
-    m = re.match(r"^\s*webgui_port\s*=\s*(\d+)\b", path_autoexec.read_text(),
+    m = re.search(r"^\s*webgui_port\s*=\s*(\d+)\b", path_autoexec.read_text(),
                  re.MULTILINE)
     webgui_port = int(m.group(1)) if m else 8088
 except FileNotFoundError:
