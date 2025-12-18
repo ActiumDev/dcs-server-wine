@@ -34,25 +34,10 @@ cat <<-EOF >${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
 	[HKEY_CURRENT_USER\\Software\\Wine\\WineDbg]
 	"ShowCrashDialog"=dword:00000000
 
-	# disable Wine services not required by DCS or SRS
-	[HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\PlugPlay]
-	"Start"=dword:00000004
-	[HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\RpcSs]
-	"Start"=dword:00000004
-
-	# NOTE: explorer.exe is required to open new windows
-	[HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides]
-	# workaround for Wine prior to 8.8 lacking /64bit argument:
-	# https://github.com/ActiumDev/dcs-server-wine/issues/2
-	# TODO: re-assess when deprecating Wine 8.0
-	"dxdiag.exe"="disabled"
-	"winedevice.exe"="disabled"
-	#"rpcss.exe"="disabled"
-	#"services.exe"="disabled"
-	#"svchost.exe"="disabled"
-
-	# bypass built-in DLLs that cause issues with DCS_server.exe
+	# app-specific settings for DCS_server.exe
 	[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\DCS_server.exe\\DllOverrides]
+	# inhibit start of dxdiag after DCS crash
+	"dxdiag.exe"="disabled"
 	# Wine built-in wbemprox.dll causes DCS crash (as of Wine 8.0 and 9.0)
 	"wbemprox"="disabled"
 	# bin/zlib1.dll shipped with DCS contains zlib1.ZipOpen2(), which is
@@ -61,6 +46,15 @@ cat <<-EOF >${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
 EOF
 wine reg import ${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
 rm ${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
+
+# undo possibly counter-productive registry tweaks
+wine reg add "HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\PlugPlay" /v Start /t REG_DWORD /d 0x03 /f
+wine reg add "HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\RpcSs" /v Start /t REG_DWORD /d 0x03 /f
+wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "dxdiag.exe" /f || true
+wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "rpcss.exe" /f || true
+wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "services.exe" /f || true
+wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "svchost.exe" /f || true
+wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "winedevice.exe" /f || true
 
 # symlink Saved Games folder to C:\DCS_configs for easy access
 DCS_SAV_DIR=${WINEPREFIX:-$HOME/.wine}/drive_c/users/$USER/Saved\ Games
