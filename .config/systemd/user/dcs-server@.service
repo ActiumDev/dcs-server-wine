@@ -5,7 +5,6 @@ Description=DCS Dedicated Server
 AssertDirectoryNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i
 AssertFileNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i/Config/serverSettings.lua
 AssertFileNotEmpty=%h/.wine/drive_c/DCS_server/bin/DCS_server.exe
-AssertPathIsSymbolicLink=%h/.wine/drive_c/users/%u/Saved Games
 
 # depend on shared wineserver (see wineserver.service for details)
 After=wineserver.service
@@ -37,6 +36,10 @@ WantedBy=default.target
 Type=simple
 WorkingDirectory=%h/.wine/drive_c/DCS_server
 Environment=DCS_LOCK_FILE="%h/.wine/drive_c/DCS_configs/DCS.%i/dcs.lock"
+Environment=DCS_SAV_DIR="%h/.wine/drive_c/users/%u/Saved Games"
+
+# symlink Saved Games folder to C:\DCS_configs (will fail if non-empty)
+ExecStartPre=/bin/sh -c "if [ ! -h \"$DCS_SAV_DIR\" ] ; then if [ -d \"$DCS_SAV_DIR\" ] ; then rmdir \"$DCS_SAV_DIR\" ; fi ; ln -sT ../../DCS_configs \"$DCS_SAV_DIR\" ; fi"
 
 ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_server.exe -w DCS.%i
 Restart=always

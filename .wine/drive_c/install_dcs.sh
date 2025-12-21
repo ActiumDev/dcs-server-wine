@@ -56,16 +56,6 @@ wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "services.e
 wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "svchost.exe" /f || true
 wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "winedevice.exe" /f || true
 
-# symlink Saved Games folder to C:\DCS_configs for easy access
-DCS_SAV_DIR=${WINEPREFIX:-$HOME/.wine}/drive_c/users/$USER/Saved\ Games
-if [ ! -h "$DCS_SAV_DIR" -a -d "$DCS_SAV_DIR" ] ; then
-	# will fail intentionally if directory is non-empty
-	rmdir "$DCS_SAV_DIR"
-fi
-if [ ! -h "$DCS_SAV_DIR" ] ; then
-	ln -s ../../DCS_configs "$DCS_SAV_DIR"
-fi
-
 # if configuration directory is missing, populate it with defaults
 # TODO: support this for multiple server instances (including port setup)
 DCS_CFG_DIR=${WINEPREFIX:-$HOME/.wine}/drive_c/DCS_configs
