@@ -19,6 +19,7 @@ Environment=WLR_LIBINPUT_NO_DEVICES=1
 Environment=WLR_RENDERER_ALLOW_SOFTWARE=1
 
 ExecStart=/usr/bin/sway
+ExecReload=/usr/bin/swaymsg reload
 # workaround for race condition caused by dependent services accessing wayland prematurely
 ExecStartPost=/usr/bin/sleep 1
 ExecStopPost=/usr/bin/systemctl --user unset-environment SWAYSOCK DISPLAY WAYLAND_DISPLAY

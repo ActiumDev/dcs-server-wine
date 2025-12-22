@@ -9,7 +9,8 @@ SPDX-License-Identifier: BSD-2-Clause
 -->
 <html lang="en">
 <head>
-    <title>noVNC</title>
+    <title>dcs-server-wine VNC</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB/UlEQVRYR+1Wv0vDQBRufmBw0SI4SNvQ0naqo+Lcf0ARB0dLxy6CoG5SZxUcHBwEnR3U/6DuOugmSElo2m4qZgppTfyuJJLGttdcW0qhgZDL3b33fe+97x3Hhcb8cGPGD00JtGWgUqnkOI67HmVZbNvel2X51MVoI6Bpmj1KcNd3NBoVEKhF/v8IKIoSF0VRIZOxWGwk2nADbDab2UQi8TjZBKCXAtJ4gCgW8V4ga4e08g0tA3BE6vevTLquS5lMxuxGZCgEEPkXIg87IFcYm1B2wQXtpR9mAsVikc/n858Am+8G5DoHmQjarN4pC8wE/O0JkFuAbHtBsOcY/0fO3JthGGvpdFr37Wm1eaAugONz2Ow6hrNoH6NTdLVabcOyrAfvmmma4WQy+e3OMWUARh9wsID3BPUlqu/4lMtlWZKkLEjw2HCJcs3gq8FGHogARPcEZytwUoezCK3VyHq1Wt1BmW7I2CtKpgyoqrokCEJHUfVB5g4EtgbKgBPRHiI66wPQu+UH4OLAIvQ52EQ55mhEGo3GK8T64t/HVAIaWJD1ngS8tUaULQEN+0EZc8Qnvqs4R57JeCz3AW9ntBEolUpiKpW6B8NlWvTIUty7BzYqzYbn+XfoY917mDFfPPzHM+slZkogUAb6vbQGKcdkEaCpnGU9UAZYAGg2UwK/ZuhdMJLdE4oAAAAASUVORK5CYII=">
     <style>
         body {
             margin: 0;
@@ -86,8 +87,9 @@ SPDX-License-Identifier: BSD-2-Clause
         rfb.addEventListener("connect",  connectedToServer);
         rfb.addEventListener("disconnect", disconnectedFromServer);
         rfb.addEventListener("desktopname", updateDesktopName);
-        rfb.viewOnly = false;
+        rfb.qualityLevel = 6;
         rfb.scaleViewport = false;
+        rfb.viewOnly = false;
     </script>
 </head>
 <body>
