@@ -1,8 +1,9 @@
 # Dedicated DCS Server w/ SRS on Linux
 
-Currently *experimental* repository of configs and scripts intended to
-automatically install and manage multiple DCS and SRS server instances
-on a single headless Linux server.
+Currently *experimental* distribution of configs and scripts intended to
+automatically install and manage multiple DCS and SRS server instances on a
+single headless Linux server. Has been running reliably since DCS v2.9.9.
+Still under active development without any backwards compatibility guarantees.
 
 
 ## Features
@@ -25,16 +26,16 @@ on a single headless Linux server.
 * Automatic restart of crashed or stalled services (including detection and
   forced restart of frozen DCS server with an unresponsive WebGUI).
 * Supports multiple server instances (`DCS_server.exe -w DCS.*`) through
-  systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description)
+  systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description).
 * Auto-configured webserver for hassle-free, browser-based VNC, WebGUI
   and file access (work in progress).
 
 ### Planned Features
 
-* Olympus support: Currently blocked by #9. Help welcome.
+* Olympus support: Currently blocked by [Issue #9](https://github.com/ActiumDev/dcs-server-wine/issues/9). Help welcome.
 * Performance parity with Windows: [Requires ntsync support](https://forum.dcs.world/topic/369832-automated-installation-of-dedicated-dcs-server-w-srs-on-linux/#findComment-5710848).
   Work in progress (expected with Wine Stable 11.0 in Q1/26, but breaks
-  DCS_updater.exe, see #8).
+  DCS_updater.exe, see [Issue #8](https://github.com/ActiumDev/dcs-server-wine/issues/8)).
 * Encrypted and password-protected access to DCS WebGUI via webserver to
   delegate server-administration without providing SSH access.
 * [WebDAV](https://en.wikipedia.org/wiki/WebDAV) access to [`DCS_configs`](./.wine/drive_c/DCS_configs/)
@@ -63,7 +64,7 @@ Do not attempt the installation if you lack the required fundamentals!
 * Network: 1 Gbps link in a datacenter. At least 100 Mbps at home.
 
 Dedicated server module names and respective installed and download sizes as of
-DCS 2.9.22.17913. Note that to install a module, you will temporarily need free
+DCS 2.9.23.18431. Note that to install a module, you will temporarily need free
 disk space for the sum of both sizes as `DCS_updater.exe` will first download
 all files and then unpack the module.
 
@@ -75,7 +76,7 @@ all files and then unpack the module.
 | `GERMANYCW_terrain`          |           92.1 |          30.5 |
 | `IRAQ_terrain`               |           69.3 |          22.8 |
 | `KOLA_terrain`               |           66.7 |          19.1 |
-| `MARIANAISLANDSWWII_terrain` |            6.4 |           2.2 |
+| `MARIANAISLANDSWWII_terrain` |            6.5 |           2.2 |
 | `MARIANAISLANDS_terrain`     |            9.8 |           2.8 |
 | `NEVADA_terrain`             |            7.1 |           2.3 |
 | `NORMANDY_terrain`           |           38.4 |          12.7 |
@@ -84,9 +85,9 @@ all files and then unpack the module.
 | `SUPERCARRIER`               |            0.2 |           0.1 |
 | `SYRIA_terrain`              |           37.3 |          12.5 |
 | `THECHANNEL_terrain`         |           18.0 |           6.6 |
-| `WORLD`                      |           19.2 |          10.3 |
+| `WORLD`                      |           19.8 |          10.7 |
 | `WWII-ARMOUR`                |            1.1 |           0.5 |
-| **Σ**                        |      **542.4** |     **181.5** |
+| **Σ**                        |      **543.0** |     **181.8** |
 
 ### Operating System
 
