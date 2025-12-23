@@ -1,8 +1,9 @@
 [Unit]
-Description=DCS Dedicated Server
+Description=DCS World Dedicated Server (with watchdog wrapper)
 
 # verify required file and directory structure
 AssertDirectoryNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i
+AssertFileNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i/Config/autoexec.cfg
 AssertFileNotEmpty=%h/.wine/drive_c/DCS_configs/DCS.%i/Config/serverSettings.lua
 AssertFileNotEmpty=%h/.wine/drive_c/DCS_server/bin/DCS_server.exe
 
@@ -17,57 +18,21 @@ After=dcs-updater-repair.service
 Conflicts=dcs-updater.service
 Conflicts=dcs-updater-repair.service
 
-# start dcs-watchdog when starting the dcs-server
-Requires=dcs-watchdog@%i.service
-# restart dcs-server when restarting dcs-watchdog (watchdog is a canary that
-# exits to signals failure of dcs-server)
-PartOf=dcs-watchdog@%i.service
-
-# automatically restart up to 5 times in 10 minutes
-# FIXME: breaks automatic restart when master server is down
-# TODO: rely on RestartMaxDelaySec= instead (see below)
-StartLimitIntervalSec=10m
-StartLimitBurst=5
-
 [Install]
 WantedBy=default.target
 
 [Service]
 Type=simple
 WorkingDirectory=%h/.wine/drive_c/DCS_server
-Environment=DCS_LOCK_FILE="%h/.wine/drive_c/DCS_configs/DCS.%i/dcs.lock"
 Environment=DCS_SAV_DIR="%h/.wine/drive_c/users/%u/Saved Games"
 
 # symlink Saved Games folder to C:\DCS_configs (will fail if non-empty)
 ExecStartPre=/bin/sh -c "if [ ! -h \"$DCS_SAV_DIR\" ] ; then if [ -d \"$DCS_SAV_DIR\" ] ; then rmdir \"$DCS_SAV_DIR\" ; fi ; ln -sT ../../DCS_configs \"$DCS_SAV_DIR\" ; fi"
 
-ExecStart=/usr/bin/wine %h/.wine/drive_c/DCS_server/bin/DCS_server.exe -w DCS.%i
-Restart=always
-RestartSec=15
-# starting the dedicated server while the DCS master server is (temporarily)
-# unreachable, results in a bricked server:
-# https://forum.dcs.world/topic/370019-loginscript-errors-brick-dedicated-server-unreliable-as-non-interactive-background-service/#comment-5616141
-# although dcs-watchdog will force a restart, the current restart delay is
-# relatively low for continuously attempting to start the server.
-# TODO: use RestartSteps= and RestartMaxDelaySec= to linearly increase restart
-#       delays once systemd 254 becomes available with Debian Trixie:
-#       https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#RestartSteps=
-#RestartSteps=10
-#RestartMaxDelaySec=600
-
-# systemd default service stop method (SIGTERM to $MAINPID) would forcefully
-# terminate DCS_server.exe, which would bypass its regular shutdown procedure
-# (stopping mission, running callback scripts, closing log files, ...).
-# stop DCS_server.exe gracefully via WM_CLOSE event (equivalent to pressing "X"
-# on window title bar) via taskkill.exe and the Windows PID in $DCS_LOCK_FILE.
-# NOTE: systemd expects service to have terminated once ExecStop command has
-#       returned and will immediately kill all remaining processes, so sleep
-#       until $MAINPID has exited.
-# NOTE: systemd calls ExecStop with MAINPID unset if the process terminated on
-#       its own or if it was killed.
-# https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#ExecStop=
-ExecStop=/bin/sh -c "if [ ! $MAINPID ] ; then exit ; fi ; if [ -e \"$DCS_LOCK_FILE\" ] ; then wine taskkill /pid $(cat \"$DCS_LOCK_FILE\") ; else kill -TERM $MAINPID ; fi ; while [ -e /proc/$MAINPID ] ; do sleep 1 ; done"
-TimeoutStopSec=60
+ExecStart=%h/bin/dcs-server-watchdog DCS.%i
+# send SIGTERM only to watchdog to trigger graceful termination
+KillMode=mixed
+Restart=on-abnormal
 
 # clean up temporary directory
 ExecStopPost=/usr/bin/rm -rf %h/.wine/drive_c/users/%u/AppData/Local/Temp/DCS.%i/

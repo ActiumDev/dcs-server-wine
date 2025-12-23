@@ -1,0 +1,71 @@
+#!/usr/bin/python3
+
+import asyncio
+import os
+from pathlib import Path
+import signal
+import sys
+
+# first and only CLI argument: DCS writedir (DCS_server.exe -w writedir)
+writedir = sys.argv[1]
+
+# verify that writedir exists
+path_wdir = Path(os.getenv("WINEPREFIX") or os.getenv("HOME") + "/.wine") \
+          / "drive_c" / "users" / (os.getenv("USER") or os.getenv("USERNAME")) \
+          / "Saved Games" / writedir
+if not path_wdir.is_dir():
+    raise NotADirectoryError(f"DCS writedir not found: {path_wdir!s}")
+
+async def run_server():
+    proc = await asyncio.create_subprocess_exec("wine", str(Path.home() / ".wine/drive_c/DCS_server/bin/DCS_server.exe"), "-w", writedir)
+
+    # wait for server process to terminate (e.g., crash or Sim.exitProcess())
+    try:
+        await proc.wait()
+        # let wine reap all dependent processes (avoid systemd SIGKILL spree)
+        await asyncio.sleep(1)
+        return
+    except asyncio.CancelledError:
+        pass
+
+    # attempt to terminate gracefully. if that fails, raise an exception and
+    # have systemd handle the cleanup of whatever processes may be left in the
+    # control group.
+    # TODO: try killing harder, do not give up immediately.
+    try:
+        path_lock = path_wdir / "dcs.lock"
+        pid = int(path_lock.read_text())
+
+        # SIGTERM via proc.terminate() would forcibly terminate DCS_server.exe
+        # without its graceful shutdown procedure (stop mission, run callback
+        # scripts, close log files, etc.). instead, stop DCS_server.exe via
+        # WM_CLOSE event (equivalent to pressing "X" on window title bar) by
+        # using taskkill.exe on the PID in dcs.lock to trigger the graceful
+        # shutdown procedure.
+        async with asyncio.timeout(1):
+            kill = await asyncio.create_subprocess_exec("wine", "taskkill", "/pid", str(pid))
+            if await kill.wait() != 0:
+                raise RuntimeError(f"wine taskkill /pid {pid} failed")
+
+        # wait for server process to terminate
+        async with asyncio.timeout(60):
+            await proc.wait()
+
+        # let wine reap all dependent processes (avoid systemd SIGKILL spree)
+        await asyncio.sleep(1)
+        return
+    except (FileNotFoundError, ValueError):
+        raise
+    except asyncio.TimeoutError:
+        raise
+
+async def main():
+    loop = asyncio.get_running_loop()
+    task = asyncio.create_task(run_server())
+    loop.add_signal_handler(signal.SIGINT, task.cancel)
+    loop.add_signal_handler(signal.SIGTERM, task.cancel)
+    await task
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
