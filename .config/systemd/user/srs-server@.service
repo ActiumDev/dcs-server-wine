@@ -18,5 +18,8 @@ WantedBy=default.target
 Type=simple
 WorkingDirectory=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS
 ExecStart=%h/.wine/drive_c/DCS_configs/DCS.%i/SRS/SRS-Server-Commandline -c %h/.wine/drive_c/DCS_configs/DCS.%i/SRS/server.cfg
+# SRS-Server-Commandline returns 143 (128+SIGTERM) after graceful shutdown succeeded:
+# https://github.com/ciribob/DCS-SimpleRadioStandalone/issues/939
+SuccessExitStatus=143
 Restart=always
 RestartSec=1
