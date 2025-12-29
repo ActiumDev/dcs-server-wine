@@ -1,4 +1,4 @@
--- DCS World Standalone Web Console v2025.11.10
+-- DCS World Standalone Web Console v2025.12.29
 -- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com>
 -- SPDX-License-Identifier: MIT
 --
@@ -524,7 +524,7 @@ end
 
 webcon.html = [[
 <!DOCTYPE html>
-<!-- DCS World Standalone Web Console v2025.08.03 -->
+<!-- DCS World Standalone Web Console v2025.12.29 -->
 <!-- (c) 2024-2025 Actium <ActiumDev@users.noreply.github.com> -->
 <!-- SPDX-License-Identifier: MIT -->
 <html>
@@ -533,8 +533,6 @@ webcon.html = [[
     <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABsUlEQVQ4T2NkwANeaTvwvAbKa1898AWXMkZcEjf1XKsYGRkb/oMU/P/foH5pdxs2tVgNuKvtIveXifk+AxMQgg1g+Mf077+CypVdj9ENwWrAbW1nrf8sLFdRFH/4q6X2cM91ogwAKbqp77me8d+/ALAb/v1fr3Z5VxDRXgApbGBgYNJun/r4PwMjw7XKLFkg/x9JBoAUz1i19RGIzgjzliM5FiAGbIMa4EW6AQamVgY6RqYHQQZdPX/W7vypIxeJ9oKasaUGFwvzMUYGRkFILDK8//f3n+WlM0dvYo2Fa5q2kixsXMsY//9n/cn4tzaG/VcvIyODIbLi//+Zzl84ddAEFCfI4owJCgocV8VkjvAxMBkDA5zh2/9/n34wMvKh2wSOTYb/Txn+M4INALrqyZd3zx0Z9czNZWTkNB4LS0hAkx2u8EYVf/PiOcPjRzdlwQYwM7BBkyjEHhBiAjJBVkFFILpBGQMp7f5l+CXLqG5oLcXFxgR0GlQF0PPYALJemKE//jBIgVUbmFpXMjAy1QOtYAPmwFXA3PcUqymMjNL///8PAzrj17///xovnT7aDgAbT5Km0Wfc6wAAAABJRU5ErkJggg==">
     <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADpElEQVRYR+WXXUhTURzA/+fcze8IVw9hEJZZjqUObKuphVRqWSARJBKUL1KQ0UNBT75Ij75FEfaQENHHU0VGmVGBLnUt3WzpTM2CoocsJTV1u+f0v/u8c9e5O7CgztO95+P///0/77kE/vIgiernRaB1z+/XA3hgOnlycLvd7klEVkIAQwXlZymQRiBkTUDpNwq8abOj/ZJaCNUAw4XljQC0SUkRY7wxb6D9ohoIVQDuwj3rCdeOAYGksBKOjwExHObZPNuU5376JV4IdQAFFScIIa2xhKPA47mOJzdWBiC/soFQiBlnwvnpXGf7lRUBGM6v2A2UvIwlnIO4a6ujo3NFADDa5H1hZTcKNysq4LwHrbdgGKTEiGuoygFJ4qhh3wZRoI+RRR/MvYCmdx6veMDg6vgUl+bAJtUA0rkP2WUp7uoyW+r3yW3S+4wu863+/nPTxvEXc2qUS3sTApAOXr370EqAWKRnDvzVqaOHitUq/5cACHqg6n/2gIA5cOQP50DztZu9VBBMUiIxUbSdrz+m3BuWyUzVVWAwGDK06brbhMBBv2wqIQDn0MbmpmqcTueMmmpQBYDKk5LSMx/hPWCvkhLG+TPvzI8ql8u1EC+EKgDjjtIWrP16v83KgzPe0m/rPJkQwOuiIm36gu6MRkOzQPSiW6lXBH5TP9AxUGgqqaGE3ELrFaADSEjF8XOIo9Zh67oTD0SEsMH88joNpdcjvyS8v1YzUcKEtFHsm+uihUrKxcimyuErFWdz7Hb77HIQIQCjqbhOB5oLa4HlAQihcx7gs+OEjaDlBeGUixYruxf5Fzl3ACMzvhyVHUTv4OWVtfbbrK3StA/AaNyZTZK1I/iImpUiHJzDro9H/NRLZUJwXrYeRQfi3IKYM9hn/eiTlW8utqzKWG3VG4uAULzvBqCjz8VwaKzMDFgqyWOMwZDjDfycnrI4e7q6QwBpKWnW7C16oDTs/lh2LhdbxXWJgIswNjwEv+Zn5QBmi4akWhHPH5SoPI/fF4t3hoMXKVYEFukBDRGsYepgHQRJ8LcDKz/MJVcTP5zcK1EAAgIQWWJFhjT8tnSoYyZdVEQiALAEjYQKfUvHVSacocVUjppQNkhlauzr7XSEfGw0lz5AUVXY6FS1Z19P9tW6QihCa7LgYiPAt7b+3s5qqSgilKEnTFiG9zBdsnxHGHgZ5c0cPJeXtHMCV4K/qIs2CVzbgA3sHE5rfIiUf/Z42WGXzWoLbv0NaLJqMDWo9KsAAAAASUVORK5CYII=">
     <style>pre:has(> code.error) { background: #402020; }</style>
-    <!-- ACE is optional: remove the subsequent <script> tag to use the web console without syntax highlighting -->
-    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1/src-min-noconflict/ace.js"></script>
 </head>
 <body style="color-scheme: dark; color: #ffffff; background-color: #202020;">
 <label for="lua_state" title="Environment (so called Lua state) in which code will be executed" style="text-decoration: underline; text-decoration-style: dotted;">Environment:</label>
@@ -567,28 +565,34 @@ webcon.html = [[
 const button    = document.getElementById("btn_exec");
 const lua_state = document.getElementById("lua_state");
 const format    = document.getElementById("format");
+var   editor    = document.getElementById("editor");
+var   result    = document.getElementById("result");
 
-// attempt to replace plain <textarea> with ACE editor, but fail gracefully
-const editor = typeof ace === "object" ? ace.edit("editor") : document.getElementById("editor");
-if (typeof ace === "object") {
-    editor.setTheme("ace/theme/tomorrow_night_bright");
-    editor.session.setMode("ace/mode/lua");
-    editor.setOption("maxLines", Infinity);
-    editor.setOption("minLines", 20);
+// ACE is optional: suffix URL with #noace to use the web console without syntax highlighting
+if (document.location.hash === "#noace") {
+    console.warn("ACE editor disabled, falling back to plain <textaread> and <pre>.");
 } else {
-    console.warn("Loading ACE editor failed, falling back to plain <textarea>.");
-}
+    let script = document.createElement('script');
+    script.async = false;
+    script.onload = function () {
+        editor = ace.edit("editor");
+        editor.setTheme("ace/theme/tomorrow_night_bright");
+        editor.session.setMode("ace/mode/lua");
+        editor.setOption("maxLines", Infinity);
+        editor.setOption("minLines", 20);
 
-// attempt to replace plain <pre> with read-only ACE for syntax highlighting
-const result = typeof ace === "object" ? ace.edit("result") : document.getElementById("result");
-if (typeof ace === "object") {
-    result.setTheme("ace/theme/tomorrow_night_bright");
-    result.session.setMode("ace/mode/json");
-    result.setOption("maxLines", Infinity);
-    result.setOption("minLines", 20);
-    result.setReadOnly(true);
-} else {
-    console.warn("Loading ACE editor failed, falling back to plain <pre>.");
+        result = ace.edit("result");
+        result.setTheme("ace/theme/tomorrow_night_bright");
+        result.session.setMode("ace/mode/json");
+        result.setOption("maxLines", Infinity);
+        result.setOption("minLines", 20);
+        result.setReadOnly(true);
+    };
+    script.onerror = function () {
+        console.warn("ACE editor loading failed, falling back to plain <textaread> and <pre>.");
+    };
+    script.setAttribute("src", "https://cdn.jsdelivr.net/npm/ace-builds@1/src-min-noconflict/ace.js");
+    document.head.appendChild(script);
 }
 
 const xhr = new XMLHttpRequest();
@@ -647,13 +651,13 @@ function get_code() {
 // set result (read-only ACE or <pre>)
 function set_result(text, type) {
     // truncate result to prevent browser stall
-    if (text.length > 131072) {
-        text = text.substring(0, 131072) + "\n<TRUNCATED>"
+    if (text.length > 32768) {
+        text = text.substring(0, 32768) + "\n<TRUNCATED>"
     }
 
     if (typeof ace === "object") {
         result.setValue("");
-                if (type === "application/json") {
+        if (type === "application/json") {
             result.session.setMode("ace/mode/json");
         } else if (type === "application/lua") {
             result.session.setMode("ace/mode/lua");
