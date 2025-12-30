@@ -47,6 +47,25 @@ SPDX-License-Identifier: BSD-2-Clause
         let rfb;
         let desktopName;
 
+        // Build the websocket URL used to connect
+        let url = (window.location.protocol === "https:" ? "wss://" : "ws://")
+                + window.location.host + "/vnc/websocket";
+
+        function connect() {
+            status("Connecting");
+
+            // Creating a new RFB object will start a new connection
+            rfb = new RFB(document.getElementById("screen"), url);
+
+            // Add listeners to important events from the RFB module
+            rfb.addEventListener("connect",  connectedToServer);
+            rfb.addEventListener("disconnect", disconnectedFromServer);
+            rfb.addEventListener("desktopname", updateDesktopName);
+            rfb.qualityLevel = 6;
+            rfb.scaleViewport = false;
+            rfb.viewOnly = false;
+        }
+
         // When this function is called we have
         // successfully connected to a server
         function connectedToServer(e) {
@@ -61,6 +80,10 @@ SPDX-License-Identifier: BSD-2-Clause
             } else {
                 status("Something went wrong, connection is closed");
             }
+
+            if (confirm("Connection lost. Reconnect?")) {
+                connect();
+            }
         }
 
         // When this function is called we have received
@@ -71,25 +94,10 @@ SPDX-License-Identifier: BSD-2-Clause
 
         // Show a status text in the top bar
         function status(text) {
-            document.getElementById('status').textContent = text;
+            document.getElementById("status").textContent = text;
         }
 
-        status("Connecting");
-
-        // Build the websocket URL used to connect
-        let url = (window.location.protocol === "https:" ? "wss://" : "ws://")
-                + window.location.host + "/vnc/websocket";
-
-        // Creating a new RFB object will start a new connection
-        rfb = new RFB(document.getElementById('screen'), url);
-
-        // Add listeners to important events from the RFB module
-        rfb.addEventListener("connect",  connectedToServer);
-        rfb.addEventListener("disconnect", disconnectedFromServer);
-        rfb.addEventListener("desktopname", updateDesktopName);
-        rfb.qualityLevel = 6;
-        rfb.scaleViewport = false;
-        rfb.viewOnly = false;
+        connect();
     </script>
 </head>
 <body>
