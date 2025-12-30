@@ -20,8 +20,16 @@ StopWhenUnneeded=yes
 [Service]
 Type=simple
 WorkingDirectory=%h/.wine/drive_c
+
+# rudimentary security hardening: disable tty and file system access
+ExecStartPre=/bin/rm -f %h/.wine/dosdevices/com1 %h/.wine/dosdevices/com2 %h/.wine/dosdevices/com3 %h/.wine/dosdevices/com4 %h/.wine/dosdevices/z:
+
 # FIXME: crude hack to keep wineserver, explorer.exe, etc. running
 ExecStart=/usr/bin/wine %h/.wine/drive_c/bin/idle.exe
+
 # prevent race condition to start wineserver between us and dependent units by
 # delaying the latter
 ExecStartPost=/usr/bin/sleep 1
+
+# configure wine
+ExecStartPost=/usr/bin/wine reg import %h/.wine/drive_c/wineconfig.reg

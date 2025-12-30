@@ -19,35 +19,8 @@ fi
 # redirect new windows to headless GUI session (winecfg)
 export $(systemctl --user show-environment | grep -m1 ^WAYLAND_DISPLAY=)
 
-# configure Wine
-wine winecfg -v win10
-cat <<-EOF >${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
-	REGEDIT4
-
-	# suppress winedbg window (would inhibit automatic post-crash service restart)
-	# defaults to "winedbg --auto %ld %ld" as of Wine 8.0, which shows crash trace
-	# in a new window. alternatively, could be disabled with "false".
-	[HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AeDebug]
-	"Debugger"="winedbg --minidump %ld"
-
-	# never show crash dialog (would inhibit automatic post-crash service restart)
-	[HKEY_CURRENT_USER\\Software\\Wine\\WineDbg]
-	"ShowCrashDialog"=dword:00000000
-
-	# app-specific settings for DCS_server.exe
-	[HKEY_CURRENT_USER\\Software\\Wine\\AppDefaults\\DCS_server.exe\\DllOverrides]
-	# inhibit start of dxdiag after DCS crash
-	"dxdiag.exe"="disabled"
-	# Wine built-in wbemprox.dll causes DCS crash (as of Wine 8.0 and 9.0)
-	"wbemprox"="disabled"
-	# bin/zlib1.dll shipped with DCS contains zlib1.ZipOpen2(), which is
-	# missing from Wine built-in zlib1 (as of Wine 8.0 and 9.0)
-	"zlib1"="native"
-EOF
-wine reg import ${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
-rm ${WINEPREFIX:-$HOME/.wine}/drive_c/wineconfig.reg
-
 # undo possibly counter-productive registry tweaks
+# TODO: move to separate script and/or remove once obsolete
 wine reg add "HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\PlugPlay" /v Start /t REG_DWORD /d 0x03 /f
 wine reg add "HKEY_LOCAL_MACHINE\\System\\CurrentControlSet\\Services\\RpcSs" /v Start /t REG_DWORD /d 0x03 /f
 wine reg delete "HKEY_CURRENT_USER\\Software\\Wine\\DllOverrides" /v "dxdiag.exe" /f || true

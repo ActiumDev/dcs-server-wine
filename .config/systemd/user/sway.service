@@ -1,5 +1,5 @@
 [Unit]
-Description=sway - SirCmpwn's Wayland window manager
+Description=sway window manager (headless configuration)
 Documentation=man:sway(5)
 
 [Install]
