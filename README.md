@@ -10,9 +10,9 @@ Still under active development without any backwards compatibility guarantees.
 
 * Ready for takeoff: Zero configuration required. Runs out of the box.
   * Pre-configured with [reasonable defaults](./.wine/drive_c/DCS_configs/DCS_defaults/Config/).
-    Auto-starts a default mission (Caucasus with dynamic spawns).
-  * Server-side Tacview with per-instance `*.acmi` file directory. Optional.
-    Enable with: `systemctl --user enable --now tacview@serverN`
+    Auto-starts a minimal mission (Caucasus with dynamic spawns).
+  * Includes server-side Tacview configured for per-instance `*.acmi` file
+    directory. Optional. Enable with: `systemctl --user enable --now tacview@server1`
   * Continuous performance monitoring: [`FPSmon.lua`](./.wine/drive_c/DCS_configs/DCS_defaults/Config/Scripts/Hooks/FPSmon.lua)
     warns clients about low server simulation frame rate or frame time spikes.
   * [Mitigates security vulnerabilities](./patches/01_MissionScripting.lua.patch)
@@ -21,18 +21,18 @@ Still under active development without any backwards compatibility guarantees.
 * Minimal overhead: ~250M RAM on Debian 13.0 (kernel + user-space)
   * Built for headless (non-GUI) Linux servers without desktop environment.
   * Runs Caucasus and Marianas on servers with 8G RAM (more for other terrains)
-* Convenient management of all server processes through systemd user services:
-  `systemctl --user start|stop|status (dcs-server|srs-server)@serverN`
-* Automatic restart of crashed or stalled services (including detection and
-  forced restart of frozen DCS server with an unresponsive WebGUI).
 * Supports multiple server instances (`DCS_server.exe -w DCS.*`) through
   systemd unit [instances](https://www.freedesktop.org/software/systemd/man/latest/systemd.unit.html#Description).
+* Convenient management of all server processes through systemd user services:
+  `systemctl --user start|stop|status (dcs-server|srs-server)@serverN`
+* Improved reliability: Automatic restart of crashed services. Includes detection and forced restart
+  of a stalled or [bricked](https://forum.dcs.world/topic/370019-some-errors-unnecessarily-brick-dedicated-server-unreliable-as-non-interactive-background-service/)
+  DCS_server.exe with an unresponsive WebGUI.
 * Auto-configured webserver for hassle-free, browser-based VNC, WebGUI
   and file access (work in progress).
 
 ### Planned Features
 
-* Olympus support: Currently blocked by [Issue #9](https://github.com/ActiumDev/dcs-server-wine/issues/9). Help welcome.
 * Performance parity with Windows: [Requires ntsync support](https://forum.dcs.world/topic/369832-automated-installation-of-dedicated-dcs-server-w-srs-on-linux/#findComment-5710848).
   Work in progress (expected with Wine Stable 11.0 in Q1/26, but breaks
   DCS_updater.exe, see [Issue #8](https://github.com/ActiumDev/dcs-server-wine/issues/8)).
@@ -40,6 +40,8 @@ Still under active development without any backwards compatibility guarantees.
   delegate server-administration without providing SSH access.
 * [WebDAV](https://en.wikipedia.org/wiki/WebDAV) access to [`DCS_configs`](./.wine/drive_c/DCS_configs/)
   folder to facilitate remote file access via Windows' *Map network drive*.
+* Olympus support: Currently blocked by [Issue #9](https://github.com/ActiumDev/dcs-server-wine/issues/9).
+  Help welcome.
 
 ## Requirements
 
@@ -155,7 +157,8 @@ systemctl --user enable --now sway wayvnc webserver
 
 `dcs@server` now runs the minimal, headless GUI, a VNC server, and a webserver
 that provides straightforward VNC and DCS WebGUI access. The connection is
-securely authenticated and encrypted via SSH static port forwarding (`-L`).
+securely authenticated and encrypted via SSH static port forwarding
+([`-L`](https://manpages.debian.org/trixie/openssh-client/ssh.1.en.html#L)).
 Open <http://127.0.0.1:8080/vnc/> in a webbrowser to access the VNC server that
 should now show an empty desktop with a clock in the top right corner.
 
