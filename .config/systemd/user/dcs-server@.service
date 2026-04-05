@@ -32,7 +32,7 @@ ExecStartPre=/bin/sh -c "if [ ! -h \"$DCS_SAV_DIR\" ] ; then if [ -d \"$DCS_SAV_
 ExecStart=%h/bin/dcs-server-watchdog DCS.%i
 # send SIGTERM only to watchdog to trigger graceful termination
 KillMode=mixed
-Restart=on-abnormal
+Restart=always
 
 # clean up temporary directory
 ExecStopPost=/usr/bin/rm -rf %h/.wine/drive_c/users/%u/AppData/Local/Temp/DCS.%i/

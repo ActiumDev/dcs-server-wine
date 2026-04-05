@@ -3,6 +3,7 @@
 import asyncio
 import os
 from pathlib import Path
+import re
 import signal
 import sys
 
@@ -16,17 +17,106 @@ path_wdir = Path(os.getenv("WINEPREFIX") or os.getenv("HOME") + "/.wine") \
 if not path_wdir.is_dir():
     raise NotADirectoryError(f"DCS writedir not found: {path_wdir!s}")
 
+# get paths to autoexec.cfg and network.vault
+path_autoexec: Path = path_wdir / "Config" / "autoexec.cfg"
+path_vault: Path = path_wdir / "Config" / "network.vault"
+
+# try to parse webgui_port from autoexec.cfg, fall back to 8088
+try:
+    m = re.search(r"^\s*webgui_port\s*=\s*(\d+)\b", path_autoexec.read_text(),
+                  re.MULTILINE)
+    webgui_port = int(m.group(1)) if m else 8088
+except (FileNotFoundError, ValueError):
+    webgui_port = 8088
+
+async def webgui_request():
+    reader, writer = await asyncio.open_connection("127.0.0.1", webgui_port)
+
+    # valid pre-encrypted request: {"uri":"getServerUptime"}
+    # https://github.com/ActiumDev/dcs-webgui-python
+    # NOTE: b"GET / HTTP/1.1\r\nConnection: close\r\n\r\n" will detect that
+    #       a dedicated server failed to start (stuck on error popup).
+    #       however, the dedicated server will continue to respond normally
+    #       even if its simulation is hung/frozen (e.g., infinite loop in
+    #       `onSimulationFrame()`). same applies to querying the UDP port.
+    #       only valid encrypted requests time out as of DCS 2.9.25.
+    req: bytes = (
+        b"POST /encryptedRequest HTTP/1.1\r\n"
+        b"Connection: close\r\n"
+        b"Content-Length: 88\r\n"
+        b"Content-Type: application/json\r\n\r\n"
+        b'{"iv": "AAAAAAAAAAAAAAAAAAAAAA==", "ct": "OVaEyj8+jb8kP4mpXDyh78LC4HbUvZK8bHK52DdC/Qc="}'
+    )
+
+    # send request
+    writer.write(req)
+    await writer.drain()
+
+    # receive and parse response header
+    header = (await reader.readuntil(b"\r\n\r\n")).decode("ascii")
+    header = header.removesuffix("\r\n\r\n").split("\r\n")
+
+    # verify HTTP response status
+    if header[0] not in {"HTTP/1.0 200 OK", "HTTP/1.1 200 OK"}:
+        raise RuntimeError(f"invalid HTTP response: {header}")
+
+    # split header fields into dictionary and check Content-Type
+    fields: dict[str, str] = dict(line.split(": ", 1) for line in header[1:])
+    if fields["Content-Type"] != "application/json":
+        raise RuntimeError(
+            f"invalid HTTP response Content-Type: {fields['Content-Type']}"
+        )
+
+    # receive response body
+    body = await reader.readexactly(int(fields["Content-Length"]))
+    writer.close()
+    await writer.wait_closed()
+
+    # return status, header fields and response body
+    return header[0], fields, body
+
+async def watchdog():
+    # give server 2 minutes to come up
+    await asyncio.sleep(120)
+
+    num_failures = 0
+    while True:
+        await asyncio.sleep(15)
+
+        # missing network.vault implies that server will block on DCS Login
+        # window and no amount of restarting will help
+        if not path_vault.exists():
+            continue
+
+        # query WebGUI
+        try:
+            async with asyncio.timeout(10):
+                _ = await webgui_request()
+                num_failures = 0
+        except (ConnectionError, TimeoutError) as e:
+            num_failures += 1
+            print(f"No response from server: {e!r}", flush=True)
+
+        # break after 3 consecutive failures
+        if num_failures >= 3:
+            # raise an exception to terminate the watchdog and let systemd
+            # handle restarting
+            # TODO: implement in-process restart and cooldown logic
+            raise RuntimeError(f"Terminating after 3 missed responses.")
+
 async def run_server():
     proc = await asyncio.create_subprocess_exec("wine", str(Path.home() / ".wine/drive_c/DCS_server/bin/DCS_server.exe"), "-w", writedir)
 
     # wait for server process to terminate (e.g., crash or Sim.exitProcess())
     try:
-        await proc.wait()
+        _ = await asyncio.gather(proc.wait(), watchdog())
         # let wine reap all dependent processes (avoid systemd SIGKILL spree)
         await asyncio.sleep(1)
         return
     except asyncio.CancelledError:
         pass
+    except RuntimeError as e:
+        print(e, flush=True)
 
     # attempt to terminate gracefully. if that fails, raise an exception and
     # have systemd handle the cleanup of whatever processes may be left in the
@@ -48,8 +138,11 @@ async def run_server():
                 raise RuntimeError(f"wine taskkill /pid {pid} failed")
 
         # wait for server process to terminate
-        async with asyncio.timeout(60):
-            await proc.wait()
+        try:
+            async with asyncio.timeout(60):
+                await proc.wait()
+        except asyncio.TimeoutError:
+            proc.terminate()
 
         # let wine reap all dependent processes (avoid systemd SIGKILL spree)
         await asyncio.sleep(1)
